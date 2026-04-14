@@ -3310,7 +3310,7 @@ body {
         </div>
       </div>
       <!-- Row 1, Card 2 — Volvo FM460 -->
-      <div class="equip-card reveal reveal-delay-1">
+      <div class="equip-card reveal reveal-delay-1" data-href="product-detail-2.html">
         <div class="equip-card__img">
           <img src="Volvo FM460.jpg" alt="Volvo FM460" loading="lazy">
           <video src="Video_Generation_From_User_Request.mp4" muted loop preload="none"></video>
@@ -3330,7 +3330,7 @@ body {
               <div class="equip-card__price"><span style="font-size:12px;font-weight:500;color:var(--text-muted);">AED </span>220,000</div>
               <div style="font-size:10px;color:var(--text-muted);margin-top:1px;">from AED 3,100/mo</div>
             </div>
-            <a href="product-detail.html" class="btn-view" style="padding:10px 14px;background:var(--brand-navy);color:#fff;border:none;border-radius:6px;font-size:12px;font-weight:800;cursor:pointer;font-family:var(--font-body);transition:background 0.2s;display:flex;align-items:center;justify-content:center;gap:6px;text-decoration:none;">View Details <i class="fi fi-rr-arrow-right" style="font-size:11px;display:flex;"></i></a>
+            <a href="product-detail-2.html" class="btn-view" style="padding:10px 14px;background:var(--brand-navy);color:#fff;border:none;border-radius:6px;font-size:12px;font-weight:800;cursor:pointer;font-family:var(--font-body);transition:background 0.2s;display:flex;align-items:center;justify-content:center;gap:6px;text-decoration:none;">View Details <i class="fi fi-rr-arrow-right" style="font-size:11px;display:flex;"></i></a>
           </div>
         </div>
       </div>
@@ -4051,7 +4051,7 @@ document.querySelectorAll('.equip-card').forEach(card => {
   }
   card.addEventListener('click', (e) => {
     if (e.target.closest('.fav-btn') || e.target.closest('.btn-view')) return;
-    window.location.href = 'product-detail.html';
+    window.location.href = card.dataset.href || 'product-detail.html';
   });
 });
 
