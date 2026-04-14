@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:www.truckscout24.com)",
+      "Bash(git:*)"
+    ]
+  }
+}
