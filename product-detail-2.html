@@ -326,13 +326,26 @@ a{text-decoration:none;color:inherit;}
 @media (max-width:768px){
   .container{padding:0 20px;}
   .sub-nav .container{padding:0 20px !important;overflow-x:auto;-webkit-overflow-scrolling:touch;}
+  /* — Utility bar: compact single row on mobile — */
+  .utility-bar{padding:6px 0;font-size:11px;}
+  .utility-bar .container{flex-wrap:nowrap;gap:0;}
+  .utility-bar__left{gap:6px;flex-shrink:0;}
+  .utility-bar__left .utility-bar__divider{height:10px;}
+  .utility-bar__left .utility-bar__item{font-size:11px;}
+  .utility-bar__right{gap:8px;}
+  .utility-bar__right .utility-bar__item span{font-size:11px;}
+  .utility-bar__right .utility-bar__divider{height:10px;}
+  .lang-toggle{font-size:11px;padding:3px 8px;}
+  /* — Navigation — */
   .main-nav .container{height:auto;min-height:64px;flex-wrap:wrap;padding-top:10px;padding-bottom:10px;gap:12px;}
   .nav-search{order:3;flex:1 1 100%;height:42px;}
   .nav-search__cat{display:none;}
   .btn-login,.btn-register{display:none;}
-  .nav-actions{gap:8px;}
   .mobile-menu-btn{display:flex;}
   .mobile-nav-drawer{display:block;}
+  .nav-logo__img{height:38px;}
+  .nav-actions{margin-left:auto;}
+  /* — Sub nav: hide on mobile — */
   .sub-nav{display:none;}
   .features-grid{grid-template-columns:1fr !important;}
   .pdp-info__title{font-size:22px;}
@@ -385,14 +398,25 @@ a{text-decoration:none;color:inherit;}
 /* ═══ RESPONSIVE — 480px ═══ */
 @media (max-width:480px){
   .container{padding:0 16px;}
-  .sub-nav .container{padding:0 16px !important;}
+  /* — Utility bar: tighter on phone — */
+  .utility-bar{padding:5px 0;}
+  .utility-bar .container{gap:0;}
+  .utility-bar__left{gap:4px;}
+  .utility-bar__left .utility-bar__item{font-size:10.5px;}
+  .utility-bar__right{gap:6px;}
+  .utility-bar__right .utility-bar__item span{font-size:10.5px;}
+  .utility-bar__right svg{width:12px;height:12px;}
+  .lang-toggle{font-size:10.5px;padding:2px 6px;gap:2px;}
+  /* — Navigation — */
   .main-nav .container{min-height:56px;gap:10px;}
   .nav-logo__img{height:32px;}
   .nav-search{height:40px;border-radius:8px;}
   .nav-search__input{font-size:13px;padding:0 12px;}
   .nav-search__btn{width:40px;}
-  .nav-icon-btn{width:38px;height:38px;}
+  .nav-icon-btn{width:38px;height:38px;border-radius:8px;}
   .nav-icon-btn svg{width:17px;height:17px;}
+  .mobile-menu-btn{width:38px;height:38px;border-radius:8px;}
+  .mobile-menu-btn svg{width:18px;height:18px;}
   .pdp-info__title{font-size:20px;}
   .pdp-info__price{font-size:24px;}
   .pdp-info__header{padding:20px;}
@@ -468,10 +492,12 @@ a{text-decoration:none;color:inherit;}
   </div>
 </div>
 
-<!-- ═══ MAIN NAV ═══ -->
-<nav class="main-nav">
+<nav class="main-nav" id="mainNav">
   <div class="container">
-    <a href="famco-homepage.html" class="nav-logo"><img src="HeaderLogoIcon.png" alt="FAMCO" class="nav-logo__img"></a>
+    <a href="famco-homepage.html" class="nav-logo">
+      <img src="HeaderLogoIcon.png" alt="FAMCO" class="nav-logo__img">
+    </a>
+
     <div class="nav-search">
       <div class="nav-search__cat" id="catToggle" onclick="toggleCatDropdown()">
         <span id="catLabel">All Categories</span>
@@ -481,7 +507,7 @@ a{text-decoration:none;color:inherit;}
         <div class="cat-dropdown__item active" data-value="" onclick="selectCategory(this, 'All Categories', '')"><i class="fi fi-rr-apps"></i> All Categories</div>
         <div class="cat-dropdown__item" data-value="Trucks" onclick="selectCategory(this, 'Trucks', 'Trucks')"><i class="fi fi-rr-truck-side"></i> Trucks</div>
         <div class="cat-dropdown__item" data-value="Trailers" onclick="selectCategory(this, 'Trailers', 'Trailers')"><i class="fi fi-rr-trailer"></i> Trailers</div>
-        <div class="cat-dropdown__item" data-value="Buses" onclick="selectCategory(this, 'Buses &amp; Coaches', 'Buses')"><i class="fi fi-rr-bus"></i> Buses &amp; Coaches</div>
+        <div class="cat-dropdown__item" data-value="Buses" onclick="selectCategory(this, 'Buses & Coaches', 'Buses')"><i class="fi fi-rr-bus"></i> Buses &amp; Coaches</div>
         <div class="cat-dropdown__item" data-value="Forklifts" onclick="selectCategory(this, 'Forklifts', 'Forklifts')"><i class="fi fi-rr-forklift"></i> Forklifts</div>
         <div class="cat-dropdown__item" data-value="Cranes" onclick="selectCategory(this, 'Cranes', 'Cranes')"><i class="fi fi-rr-crane"></i> Cranes</div>
         <div class="cat-dropdown__item" data-value="Construction" onclick="selectCategory(this, 'Construction', 'Construction')"><i class="fi fi-rr-helmet-safety"></i> Construction</div>
@@ -489,11 +515,17 @@ a{text-decoration:none;color:inherit;}
         <div class="cat-dropdown__item" data-value="Agricultural" onclick="selectCategory(this, 'Agricultural', 'Agricultural')"><i class="fi fi-rr-tractor"></i> Agricultural</div>
       </div>
       <input class="nav-search__input" id="headerSearch" type="text" placeholder="Search brand, model, category, or location…" autocomplete="off">
-      <button class="nav-search__btn" onclick="performSearch()"><svg fill="none" stroke="white" stroke-width="2.2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></button>
+      <button class="nav-search__btn" onclick="performSearch()">
+        <svg fill="none" stroke="white" stroke-width="2.2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      </button>
       <div class="search-dropdown" id="searchDropdown"></div>
     </div>
+
     <div class="nav-actions">
-      <a href="#" class="nav-icon-btn" title="Wishlist"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg><div class="nav-icon-btn__badge">0</div></a>
+      <a href="#" class="nav-icon-btn" title="Wishlist">
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        <div class="nav-icon-btn__badge">0</div>
+      </a>
       <a href="#" class="btn-login">Login</a>
       <a href="#" class="btn-register">Register</a>
       <button class="mobile-menu-btn" onclick="document.querySelector('.mobile-nav-drawer').classList.add('active');document.querySelector('.mobile-nav-overlay').classList.add('active');document.body.style.overflow='hidden';">
@@ -502,6 +534,32 @@ a{text-decoration:none;color:inherit;}
     </div>
   </div>
 </nav>
+
+<!-- Mobile Nav Overlay -->
+<div class="mobile-nav-overlay" onclick="document.querySelector('.mobile-nav-drawer').classList.remove('active');this.classList.remove('active');document.body.style.overflow='';"></div>
+
+<!-- Mobile Nav Drawer -->
+<div class="mobile-nav-drawer">
+  <div class="mobile-nav-drawer__header">
+    <img src="HeaderLogoIcon.png" alt="FAMCO" style="height:32px;">
+    <button class="mobile-nav-drawer__close" onclick="this.closest('.mobile-nav-drawer').classList.remove('active');document.querySelector('.mobile-nav-overlay').classList.remove('active');document.body.style.overflow='';">
+      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg>
+    </button>
+  </div>
+  <div class="mobile-nav-drawer__links">
+    <a href="famco-homepage.html">Home</a>
+    <a href="listing.html">Browse Equipment</a>
+    <a href="#">Sell Your Equipment</a>
+    <a href="#">FAMCO Approved Process</a>
+    <a href="#">Finance</a>
+    <a href="#">About Us</a>
+    <a href="#">Contact</a>
+  </div>
+  <div class="mobile-nav-drawer__actions">
+    <a href="#" style="border:1.5px solid var(--brand-navy);color:var(--brand-navy);">Login</a>
+    <a href="#" style="background:var(--brand-navy);color:#fff;">Register</a>
+  </div>
+</div>
 
 <!-- ═══ SUB NAV ═══ -->
 <nav class="sub-nav">
@@ -515,32 +573,6 @@ a{text-decoration:none;color:inherit;}
     <a href="#" class="sub-nav__link">Contact</a>
   </div>
 </nav>
-
-<!-- Mobile Nav Overlay -->
-<div class="mobile-nav-overlay" onclick="this.classList.remove('active');document.querySelector('.mobile-nav-drawer').classList.remove('active');document.body.style.overflow='';"></div>
-
-<!-- Mobile Nav Drawer -->
-<div class="mobile-nav-drawer">
-  <div class="mobile-nav-drawer__header">
-    <img src="HeaderLogoIcon.png" alt="FAMCO" style="height:32px;">
-    <button class="mobile-nav-drawer__close" onclick="this.closest('.mobile-nav-drawer').classList.remove('active');document.querySelector('.mobile-nav-overlay').classList.remove('active');document.body.style.overflow='';">
-      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg>
-    </button>
-  </div>
-  <div class="mobile-nav-drawer__links">
-    <a href="famco-homepage.html">Home</a>
-    <a href="listing.html" class="active">Browse Equipment</a>
-    <a href="#">Sell Your Equipment</a>
-    <a href="#">FAMCO Approved Process</a>
-    <a href="#">Finance</a>
-    <a href="#">About Us</a>
-    <a href="#">Contact</a>
-  </div>
-  <div class="mobile-nav-drawer__actions">
-    <a href="#" style="border:1.5px solid var(--brand-navy);color:var(--brand-navy);">Login</a>
-    <a href="#" style="background:var(--brand-navy);color:#fff;">Register</a>
-  </div>
-</div>
 
 <!-- ═══ PAGE CONTENT ═══ -->
 <div class="container">
