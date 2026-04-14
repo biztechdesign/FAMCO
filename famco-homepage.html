@@ -300,6 +300,7 @@ body {
   color: var(--text-secondary);
   text-decoration: none;
   font-weight: 500;
+  font-size: 12.5px;
   transition: all 0.2s;
 }
 .lang-toggle:hover {
@@ -313,12 +314,11 @@ body {
 
 .main-nav {
   background: #fff;
-  padding: 0;
   position: sticky;
   top: 0;
   z-index: 1000;
   border-bottom: 1px solid var(--border-light);
-  transition: box-shadow 0.3s, backdrop-filter 0.3s;
+  box-shadow: 0 1px 8px rgba(0,0,0,0.04);
 }
 
 .main-nav.scrolled {
@@ -548,8 +548,8 @@ body {
   position: absolute;
   top: -6px;
   right: -6px;
-  background: var(--amber);
-  color: var(--amber-text);
+  background: var(--brand-navy);
+  color: #fff;
   width: 18px;
   height: 18px;
   border-radius: 50%;
@@ -2708,9 +2708,11 @@ body {
 @media (max-width: 1024px) {
   :root { --section-gap: 80px; }
   .container { padding: 0 32px; }
+  .sub-nav .container { padding: 0 32px; }
   .nav-search__cat { display: none; }
   .utility-bar__left { display: none; }
   .utility-bar__right { margin-left: auto; }
+  .sub-nav__link { padding: 13px 14px; font-size: 13px; }
 
   .hero .container { padding-top: 48px; padding-bottom: 80px; }
   .hero__content { text-align: center; }
