@@ -251,6 +251,24 @@ a{text-decoration:none;}
 .categories-wrap{position:relative;}
 .categories-wrap::after{content:'';position:absolute;right:0;top:0;bottom:0;width:60px;background:linear-gradient(90deg,transparent,var(--bg-warm));pointer-events:none;z-index:2;border-radius:0 var(--radius) var(--radius) 0;}
 
+/* ═══ MOBILE MENU ═══ */
+.mobile-menu-btn{display:none;width:42px;height:42px;border:1.5px solid var(--border);border-radius:9px;background:#fff;cursor:pointer;align-items:center;justify-content:center;flex-shrink:0;}
+.mobile-menu-btn svg{width:20px;height:20px;stroke:var(--text-primary);}
+.mobile-nav-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:9998;opacity:0;transition:opacity 0.3s;}
+.mobile-nav-overlay.active{display:block;opacity:1;}
+.mobile-nav-drawer{display:none;position:fixed;top:0;right:-300px;width:300px;height:100%;background:#fff;z-index:9999;transition:right 0.3s var(--ease);overflow-y:auto;box-shadow:-4px 0 20px rgba(0,0,0,0.1);}
+.mobile-nav-drawer.active{right:0;}
+.mobile-nav-drawer__header{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--border);}
+.mobile-nav-drawer__close{width:36px;height:36px;border:none;background:none;cursor:pointer;display:flex;align-items:center;justify-content:center;border-radius:8px;}
+.mobile-nav-drawer__close:hover{background:var(--bg-warm);}
+.mobile-nav-drawer__close svg{width:20px;height:20px;stroke:var(--text-primary);}
+.mobile-nav-drawer__links{padding:12px 0;}
+.mobile-nav-drawer__links a{display:block;padding:14px 24px;font-size:15px;font-weight:500;color:var(--text-primary);text-decoration:none;border-bottom:1px solid var(--border-light);transition:background 0.15s;}
+.mobile-nav-drawer__links a:hover{background:var(--bg-warm);}
+.mobile-nav-drawer__links a.active{color:var(--brand-navy);font-weight:700;background:rgba(0,102,179,0.04);}
+.mobile-nav-drawer__actions{padding:20px 24px;display:flex;flex-direction:column;gap:10px;}
+.mobile-nav-drawer__actions a{display:block;text-align:center;padding:12px;border-radius:8px;font-size:14px;font-weight:600;text-decoration:none;}
+
 /* ═══════════════════════════════════════════════════
    RESPONSIVE MEDIA QUERIES
    ═══════════════════════════════════════════════════ */
@@ -272,7 +290,6 @@ a{text-decoration:none;}
   .nav-search__cat { display: none; }
   .utility-bar__left { display: none; }
   .utility-bar__right { margin-left: auto; }
-  .sub-nav .container { overflow-x: auto; -webkit-overflow-scrolling: touch; }
   .sub-nav__link { padding: 13px 14px; font-size: 13px; }
 }
 
@@ -287,11 +304,11 @@ a{text-decoration:none;}
   .nav-logo__img { height: 36px; }
   .btn-login, .btn-register { display: none; }
   .nav-actions { gap: 8px; }
+  .mobile-menu-btn { display: flex; }
+  .mobile-nav-drawer { display: block; }
 
-  /* Sub nav scrollable */
-  .sub-nav .container { gap: 0; white-space: nowrap; scrollbar-width: none; }
-  .sub-nav .container::-webkit-scrollbar { display: none; }
-  .sub-nav__link { padding: 12px 12px; font-size: 12.5px; }
+  /* Sub nav: hide on mobile (burger menu replaces it) */
+  .sub-nav { display: none; }
 
   /* Product grid */
   .product-grid { grid-template-columns: repeat(2, 1fr); gap: 14px; }
@@ -380,9 +397,6 @@ a{text-decoration:none;}
   .active-filters__label { font-size: 11px; }
   .active-filter-tag { font-size: 10.5px; padding: 3px 8px; }
 
-  /* Sub nav */
-  .sub-nav__link { padding: 10px 10px; font-size: 12px; }
-
   /* Footer */
   .footer-col__title { font-size: 13px; margin-bottom: 14px; }
   .footer-col__links a { font-size: 13px; }
@@ -440,13 +454,42 @@ a{text-decoration:none;}
       <a href="#" class="nav-icon-btn" title="Wishlist"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg><div class="nav-icon-btn__badge">0</div></a>
       <a href="#" class="btn-login">Login</a>
       <a href="#" class="btn-register">Register</a>
+      <button class="mobile-menu-btn" onclick="document.querySelector('.mobile-nav-drawer').classList.add('active');document.querySelector('.mobile-nav-overlay').classList.add('active');document.body.style.overflow='hidden';">
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
+      </button>
     </div>
   </div>
 </nav>
 
+<!-- Mobile Nav Overlay -->
+<div class="mobile-nav-overlay" onclick="document.querySelector('.mobile-nav-drawer').classList.remove('active');this.classList.remove('active');document.body.style.overflow='';"></div>
+
+<!-- Mobile Nav Drawer -->
+<div class="mobile-nav-drawer">
+  <div class="mobile-nav-drawer__header">
+    <img src="HeaderLogoIcon.png" alt="FAMCO" style="height:32px;">
+    <button class="mobile-nav-drawer__close" onclick="this.closest('.mobile-nav-drawer').classList.remove('active');document.querySelector('.mobile-nav-overlay').classList.remove('active');document.body.style.overflow='';">
+      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg>
+    </button>
+  </div>
+  <div class="mobile-nav-drawer__links">
+    <a href="famco-homepage.html">Home</a>
+    <a href="#" class="active">Browse Equipment</a>
+    <a href="#">Sell Your Equipment</a>
+    <a href="#">FAMCO Approved Process</a>
+    <a href="#">Finance</a>
+    <a href="#">About Us</a>
+    <a href="#">Contact</a>
+  </div>
+  <div class="mobile-nav-drawer__actions">
+    <a href="#" style="border:1.5px solid var(--brand-navy);color:var(--brand-navy);">Login</a>
+    <a href="#" style="background:var(--brand-navy);color:#fff;">Register</a>
+  </div>
+</div>
+
 <!-- ═══ SUB NAV ═══ -->
 <nav class="sub-nav">
-  <div class="container" style="display:flex;gap:0;padding:0 80px;">
+  <div class="container" style="display:flex;gap:0;">
     <a href="famco-homepage.html" class="sub-nav__link">Home</a>
     <a href="#" class="sub-nav__link active">Browse Equipment</a>
     <a href="#" class="sub-nav__link">Sell Your Equipment</a>
