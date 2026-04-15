@@ -73,13 +73,13 @@ a{text-decoration:none;}
 .search-dropdown__footer a:hover{text-decoration:underline;}
 
 /* ── Save Search Bar ── */
-.save-search-bar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 18px;background:linear-gradient(135deg,rgba(0,102,179,0.06),rgba(0,102,179,0.03));border:1.5px solid rgba(0,102,179,0.18);border-radius:var(--radius);margin-bottom:14px;flex-wrap:wrap;}
-.save-search-bar__left{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--text-secondary);}
-.save-search-bar__left i{font-size:16px;color:var(--brand-navy);display:flex;flex-shrink:0;}
+.save-search-bar{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:7px 14px;background:linear-gradient(135deg,rgba(0,102,179,0.06),rgba(0,102,179,0.03));border:1.5px solid rgba(0,102,179,0.18);border-radius:var(--radius-sm);margin-bottom:6px;flex-wrap:wrap;}
+.save-search-bar__left{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text-secondary);}
+.save-search-bar__left i{font-size:13px;color:var(--brand-navy);display:flex;flex-shrink:0;}
 .save-search-bar__left strong{color:var(--text-primary);}
-.save-search-bar__btn{padding:8px 18px;background:var(--brand-navy);color:#fff;border:none;border-radius:6px;font-size:12.5px;font-weight:700;cursor:pointer;font-family:var(--font-body);white-space:nowrap;display:flex;align-items:center;gap:6px;transition:background 0.2s;flex-shrink:0;}
+.save-search-bar__btn{padding:6px 14px;background:var(--brand-navy);color:#fff;border:none;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;font-family:var(--font-body);white-space:nowrap;display:flex;align-items:center;gap:5px;transition:background 0.2s;flex-shrink:0;}
 .save-search-bar__btn:hover{background:var(--brand-navy-dark);}
-.save-search-bar__btn i{font-size:12px;display:flex;}
+.save-search-bar__btn i{font-size:11px;display:flex;}
 
 /* ── Save Search Dropdown Link ── */
 .search-dropdown__save{display:flex;align-items:center;justify-content:center;gap:6px;padding:10px 16px;border-top:1px solid var(--border);font-size:12.5px;font-weight:700;color:var(--brand-navy);cursor:pointer;transition:background 0.15s;}
@@ -177,15 +177,15 @@ a{text-decoration:none;}
 .listing-content{flex:1;min-width:0;}
 
 /* Toolbar */
-.listing-toolbar{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;background:#fff;border:1px solid var(--border);border-radius:var(--radius);margin-bottom:20px;}
-.listing-toolbar__left{display:flex;align-items:center;gap:12px;}
-.listing-toolbar__count{font-size:14px;color:var(--text-secondary);}
+.listing-toolbar{display:flex;align-items:center;justify-content:space-between;padding:7px 14px;background:#fff;border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:14px;}
+.listing-toolbar__left{display:flex;align-items:center;gap:10px;}
+.listing-toolbar__count{font-size:12.5px;color:var(--text-secondary);}
 .listing-toolbar__count strong{color:var(--text-primary);font-weight:700;}
-.listing-toolbar__right{display:flex;align-items:center;gap:12px;}
-.listing-toolbar__sort{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text-secondary);}
-.listing-toolbar__sort select{padding:8px 12px;border:1.5px solid var(--border);border-radius:var(--radius-xs);font-size:13px;font-family:var(--font-body);color:var(--text-primary);outline:none;cursor:pointer;background:#fff;}
+.listing-toolbar__right{display:flex;align-items:center;gap:10px;}
+.listing-toolbar__sort{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-secondary);}
+.listing-toolbar__sort select{padding:5px 10px;border:1.5px solid var(--border);border-radius:var(--radius-xs);font-size:12px;font-family:var(--font-body);color:var(--text-primary);outline:none;cursor:pointer;background:#fff;}
 .listing-toolbar__view{display:flex;gap:4px;}
-.view-btn{width:36px;height:36px;border:1.5px solid var(--border);border-radius:var(--radius-xs);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text-muted);background:#fff;transition:all 0.2s;}
+.view-btn{width:28px;height:28px;border:1.5px solid var(--border);border-radius:var(--radius-xs);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text-muted);background:#fff;transition:all 0.2s;}
 .view-btn.active,.view-btn:hover{border-color:var(--brand-navy);color:var(--brand-navy);background:rgba(0,102,179,0.04);}
 .view-btn i{font-size:16px;display:flex;}
 
@@ -299,14 +299,24 @@ a{text-decoration:none;}
 .back-to-top i{font-size:18px;display:flex;}
 
 /* Active filters bar */
-.active-filters{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:12px 20px;background:#fff;border:1px solid var(--border);border-radius:var(--radius);margin-bottom:16px;}
-.active-filters__label{font-size:12px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.04em;margin-right:4px;}
-.active-filter-tag{display:inline-flex;align-items:center;gap:6px;padding:5px 12px;background:rgba(0,102,179,0.06);border:1px solid rgba(0,102,179,0.15);border-radius:20px;font-size:12px;font-weight:600;color:var(--brand-navy);cursor:pointer;transition:all 0.2s;}
+.active-filters{display:flex;flex-direction:column;gap:8px;padding:10px 14px;background:#fff;border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:0;}
+.active-filters__header{display:flex;align-items:center;justify-content:space-between;}
+.active-filters__label{font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.04em;}
+.active-filters__tags{display:flex;flex-wrap:wrap;gap:6px;}
+.active-filter-tag{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;background:rgba(0,102,179,0.06);border:1px solid rgba(0,102,179,0.15);border-radius:20px;font-size:11.5px;font-weight:600;color:var(--brand-navy);cursor:pointer;transition:all 0.2s;}
 .active-filter-tag:hover{background:rgba(0,102,179,0.12);}
-.active-filter-tag i{font-size:10px;display:flex;opacity:0.6;}
-.active-filters__clear{font-size:12px;font-weight:700;color:var(--error);cursor:pointer;margin-left:auto;display:flex;align-items:center;gap:4px;transition:opacity 0.2s;}
+.active-filter-tag i{font-size:9px;display:flex;opacity:0.6;}
+.active-filters__clear{font-size:11px;font-weight:700;color:var(--error);cursor:pointer;display:flex;align-items:center;gap:4px;transition:opacity 0.2s;white-space:nowrap;}
 .active-filters__clear:hover{opacity:0.7;}
-.active-filters__clear i{font-size:11px;display:flex;}
+.active-filters__clear i{font-size:10px;display:flex;}
+
+/* Mobile filter toggle button */
+.filter-toggle-btn{display:none;align-items:center;gap:6px;padding:5px 12px;background:#fff;border:1.5px solid var(--border);border-radius:var(--radius-xs);font-size:12px;font-weight:700;color:var(--text-primary);cursor:pointer;font-family:var(--font-body);transition:all 0.2s;}
+.filter-toggle-btn:hover{border-color:var(--brand-navy);color:var(--brand-navy);}
+.filter-toggle-btn i{font-size:12px;display:flex;}
+
+/* Sidebar overlay backdrop (mobile) */
+.sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:4999;}
 
 /* Category scroll indicator */
 .categories-wrap{position:relative;}
@@ -346,12 +356,32 @@ a{text-decoration:none;}
 @media (max-width: 1024px) {
   .container { padding: 0 32px; }
   .sub-nav .container { padding: 0 32px; }
-  .sidebar { display: none; }
   .page-layout { flex-direction: column; gap: 0; }
   .nav-search__cat { display: none; }
   .utility-bar__left { display: none; }
   .utility-bar__right { margin-left: auto; }
   .sub-nav__link { padding: 13px 14px; font-size: 13px; }
+
+  /* Sidebar becomes a fixed slide-in drawer */
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: -320px;
+    width: 300px;
+    height: 100vh;
+    max-height: 100vh;
+    z-index: 5000;
+    background: #fff;
+    box-shadow: 4px 0 32px rgba(0,0,0,0.18);
+    padding: 16px;
+    overflow-y: auto;
+    transition: left 0.28s ease;
+    display: block;
+  }
+  .sidebar.open { left: 0; }
+  .sidebar-overlay.open { display: block; }
+  .sidebar__mobile-header { display: flex !important; }
+  .filter-toggle-btn { display: flex; }
 }
 
 /* ─── 768px: Mobile landscape / small tablets ─── */
@@ -616,7 +646,25 @@ a{text-decoration:none;}
 
   <div class="page-layout">
     <!-- ═══ LEFT SIDEBAR ═══ -->
-    <aside class="sidebar">
+    <aside class="sidebar" id="filterSidebar">
+      <!-- Mobile header (close button) -->
+      <div class="sidebar__mobile-header" style="display:none;align-items:center;justify-content:space-between;margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid var(--border);">
+        <span style="font-family:var(--font-display);font-weight:800;font-size:15px;color:var(--text-primary);">Filters</span>
+        <button onclick="closeSidebar()" style="width:28px;height:28px;border:none;background:var(--bg-warm);border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:13px;color:var(--text-muted);">&#10005;</button>
+      </div>
+      <!-- Active Filters -->
+      <div class="active-filters" style="margin-bottom:10px;">
+        <div class="active-filters__header">
+          <span class="active-filters__label">Active Filters</span>
+          <span class="active-filters__clear"><i class="fi fi-rr-trash"></i> Clear All</span>
+        </div>
+        <div class="active-filters__tags">
+          <span class="active-filter-tag">All Equipment <i class="fi fi-rr-cross-small"></i></span>
+          <span class="active-filter-tag">🇦🇪 UAE <i class="fi fi-rr-cross-small"></i></span>
+          <span class="active-filter-tag">FAMCO Approved <i class="fi fi-rr-cross-small"></i></span>
+        </div>
+      </div>
+
       <!-- Category Filter -->
       <div class="filter-card">
         <div class="filter-card__title">Category <i class="fi fi-rr-angle-small-up"></i></div>
@@ -695,29 +743,16 @@ a{text-decoration:none;}
 
     <!-- ═══ RIGHT LISTING CONTENT ═══ -->
     <main class="listing-content">
-      <!-- Active Filters -->
-      <div class="active-filters">
-        <span class="active-filters__label">Active Filters:</span>
-        <span class="active-filter-tag">All Equipment <i class="fi fi-rr-cross-small"></i></span>
-        <span class="active-filter-tag">🇦🇪 UAE <i class="fi fi-rr-cross-small"></i></span>
-        <span class="active-filter-tag">FAMCO Approved <i class="fi fi-rr-cross-small"></i></span>
-        <span class="active-filters__clear"><i class="fi fi-rr-trash"></i> Clear All</span>
-      </div>
-      <!-- Save Search Bar (shown when query param exists) -->
-      <div class="save-search-bar" id="saveSearchBar" style="display:none;">
-        <div class="save-search-bar__left">
-          <i class="fi fi-rr-bell"></i>
-          <span>Get notified when new <strong id="saveSearchLabel"></strong> listings are added</span>
-        </div>
-        <button class="save-search-bar__btn" onclick="openSaveModal()"><i class="fi fi-rr-bookmark"></i> Save This Search</button>
-      </div>
-
-      <!-- Toolbar -->
+      <!-- Toolbar (save search merged in) -->
       <div class="listing-toolbar">
         <div class="listing-toolbar__left">
-          <span class="listing-toolbar__count">Showing <strong>1–12</strong> of <strong>500+</strong> vehicles</span>
+          <button class="filter-toggle-btn" onclick="openSidebar()"><i class="fi fi-rr-filter"></i> Filters</button>
+          <span class="listing-toolbar__count" id="resultCount">Showing <strong>1–12</strong> of <strong>500+</strong> vehicles</span>
+          <!-- Save search notice — shown only when searching -->
+          <span id="saveSearchLabel" style="display:none;"></span>
         </div>
         <div class="listing-toolbar__right">
+          <button class="save-search-bar__btn" id="saveSearchBtn" onclick="openSaveModal()" style="display:none;padding:5px 12px;font-size:11.5px;"><i class="fi fi-rr-bookmark"></i> Save Search</button>
           <div class="listing-toolbar__sort">
             <span>Sort by:</span>
             <select>
@@ -1173,11 +1208,14 @@ function filterGrid(query) {
   document.getElementById('noResultsQuery').textContent = query;
   pagination.style.display = (terms.length && visible < allCards.length) ? 'none' : '';
 
+  const saveBtn = document.getElementById('saveSearchBtn');
   if (countEl) {
     if (terms.length) {
       countEl.innerHTML = 'Showing <strong>' + visible + '</strong> result' + (visible !== 1 ? 's' : '') + ' for "<strong>' + query + '</strong>"';
+      if (saveBtn) saveBtn.style.display = 'flex';
     } else {
       countEl.innerHTML = 'Showing <strong>1–' + allCards.length + '</strong> of <strong>500+</strong> vehicles';
+      if (saveBtn) saveBtn.style.display = 'none';
     }
   }
 }
@@ -1185,7 +1223,7 @@ function filterGrid(query) {
 function clearGridSearch() {
   headerSearch.value = '';
   filterGrid('');
-  document.getElementById('saveSearchBar').style.display = 'none';
+  document.getElementById('saveSearchBtn').style.display = 'none';
   searchDropdown.classList.remove('active');
 }
 
@@ -1243,10 +1281,8 @@ document.addEventListener('keydown', (e) => {
   const params = new URLSearchParams(window.location.search);
   const q = params.get('q');
   if (q) {
-    const bar = document.getElementById('saveSearchBar');
-    document.getElementById('saveSearchLabel').textContent = '"' + q + '"';
     currentSaveQuery = q;
-    bar.style.display = 'flex';
+    document.getElementById('saveSearchBtn').style.display = 'flex';
     if (headerSearch) headerSearch.value = q;
     filterGrid(q);
   }
@@ -1315,6 +1351,21 @@ document.addEventListener('click', (e) => {
     </div>
   </div>
 </div>
+
+<!-- Sidebar overlay backdrop -->
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+<script>
+function openSidebar(){
+  document.getElementById('filterSidebar').classList.add('open');
+  document.getElementById('sidebarOverlay').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeSidebar(){
+  document.getElementById('filterSidebar').classList.remove('open');
+  document.getElementById('sidebarOverlay').classList.remove('open');
+  document.body.style.overflow='';
+}
+</script>
 
 <!-- ── CTA Color Customizer ── -->
 <style>

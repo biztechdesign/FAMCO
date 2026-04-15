@@ -661,8 +661,8 @@ a{text-decoration:none;color:inherit;}
 
     <!-- ═══ RIGHT — PRODUCT INFO (sticky sidebar) ═══ -->
     <div class="pdp-right">
-      <!-- Header -->
-      <div class="pdp-info__header">
+      <!-- Header + CTA — merged into one card -->
+      <div class="pdp-info__header" style="margin-bottom:16px;">
         <div class="pdp-info__status">
           <span class="pdp-info__approved"><i class="fi fi-rr-badge-check"></i> FAMCO Approved</span>
           <span class="pdp-info__id">ID: FMC-2023-VH-1542</span>
@@ -672,14 +672,13 @@ a{text-decoration:none;color:inherit;}
           <div class="pdp-info__price"><span class="pdp-info__price-currency">AED </span>323,000</div>
           <div style="font-size:15px;color:var(--text-secondary);font-weight:500;">OR AED 4,800/Month</div>
         </div>
-      </div>
 
-      <!-- CTA Box -->
-      <div class="pdp-cta">
+        <!-- Divider -->
+        <div style="border-top:1px solid var(--border-light);margin:20px 0 16px;"></div>
+
         <div style="font-size:12.5px;color:var(--text-muted);margin-bottom:4px;">* Price excludes VAT. Subject to terms and conditions.</div>
-        <div style="font-size:12.5px;color:var(--text-muted);margin-bottom:4px;">* 3-Month FAMCO Drivetrain Warranty included.</div>
-        <div style="margin-top:12px;font-size:14px;color:var(--text-secondary);font-weight:500;">OR AED 4,800/Month</div>
-        <div class="pdp-cta__actions" style="margin-top:18px;">
+        <div style="font-size:12.5px;color:var(--text-muted);margin-bottom:16px;">* 3-Month FAMCO Drivetrain Warranty included.</div>
+        <div class="pdp-cta__actions">
           <button class="pdp-cta__btn pdp-cta__btn--primary" style="font-size:17px;padding:18px 24px;">Book Now at AED 5,000</button>
           <button class="pdp-cta__btn pdp-cta__btn--outline"><i class="fi fi-rr-comment-dots"></i> Submit Enquiry</button>
           <div class="pdp-cta__row">
@@ -1361,7 +1360,7 @@ function playVideo(el) {
   const existing = document.getElementById('mainVideo');
   if (existing) { existing.style.display = ''; return; }
   const iframe = document.createElement('iframe');
-  iframe.src = 'https://www.youtube.com/embed/oPl_NCSV8w0?autoplay=1&rel=0';
+  iframe.src = 'https://www.youtube.com/embed/oPl_NCSV8w0?autoplay=1&mute=1&rel=0';
   iframe.allow = 'autoplay; encrypted-media';
   iframe.allowFullscreen = true;
   iframe.style.cssText = 'width:100%;height:100%;border:none;background:#000;';
