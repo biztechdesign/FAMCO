@@ -642,8 +642,8 @@ a{text-decoration:none;color:inherit;}
           <span class="gallery__badge--featured"><i class="fi fi-rr-star" style="font-size:10px;display:flex;"></i> Featured</span>
         </div>
         <div class="gallery__fav"><i class="fi fi-rr-heart"></i></div>
-        <div style="position:absolute;bottom:14px;left:14px;padding:6px 12px;background:rgba(0,0,0,0.65);color:#fff;border-radius:6px;font-size:11px;font-weight:700;display:flex;align-items:center;gap:6px;backdrop-filter:blur(4px);z-index:5;"><i class="fi fi-rr-picture" style="font-size:12px;display:flex;"></i> 28 Photos</div>
-        <div class="grade-tag grade-tag--A" style="left:auto;right:14px;bottom:14px;"><span class="grade-tag__letter">A</span> Grade</div>
+        <div class="grade-tag grade-tag--A" style="bottom:14px;left:14px;"><span class="grade-tag__letter">A</span> Grade</div>
+        <div style="position:absolute;bottom:14px;right:14px;padding:6px 12px;background:rgba(0,0,0,0.65);color:#fff;border-radius:6px;font-size:11px;font-weight:700;display:flex;align-items:center;gap:6px;backdrop-filter:blur(4px);z-index:5;"><i class="fi fi-rr-picture" style="font-size:12px;display:flex;"></i> 28 Photos</div>
       </div>
       <div class="gallery__thumbs">
         <div class="gallery__thumb active" onclick="changeImage('https://cdn.truckscout24.com/data/listing/img/vga/ts/04/94/21528542-01.jpg',this)"><img src="https://cdn.truckscout24.com/data/listing/img/vga/ts/04/94/21528542-01.jpg" alt="View 1"></div>
@@ -654,6 +654,7 @@ a{text-decoration:none;color:inherit;}
         <div class="gallery__thumb" onclick="changeImage('https://cdn.truckscout24.com/data/listing/img/vga/ts/04/94/21528542-06.jpg',this)"><img src="https://cdn.truckscout24.com/data/listing/img/vga/ts/04/94/21528542-06.jpg" alt="View 6"></div>
         <div class="gallery__thumb" onclick="changeImage('https://cdn.truckscout24.com/data/listing/img/vga/ts/04/94/21528542-07.jpg',this)"><img src="https://cdn.truckscout24.com/data/listing/img/vga/ts/04/94/21528542-07.jpg" alt="View 7"></div>
         <div class="gallery__thumb" onclick="changeImage('https://cdn.truckscout24.com/data/listing/img/vga/ts/04/94/21528542-08.jpg',this)"><img src="https://cdn.truckscout24.com/data/listing/img/vga/ts/04/94/21528542-08.jpg" alt="View 8"></div>
+        <div class="gallery__thumb" onclick="playVideo(this)" style="position:relative;"><img src="https://cdn.truckscout24.com/data/listing/img/vga/ts/04/94/21528542-01.jpg" alt="360 View" style="filter:brightness(0.45);"><div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:3px;pointer-events:none;"><i class="fi fi-rr-cube" style="font-size:15px;color:#fff;display:flex;"></i><span style="font-size:8px;font-weight:800;color:#fff;text-transform:uppercase;letter-spacing:0.05em;">360 View</span></div></div>
       </div>
     </div>
 
@@ -1351,10 +1352,12 @@ function changeImage(src, el) {
 }
 
 // Video play
-function playVideo() {
+function playVideo(el) {
   const main = document.getElementById('mainGallery');
   const img = document.getElementById('mainImage');
   img.style.display = 'none';
+  document.querySelectorAll('.gallery__thumb').forEach(t => t.classList.remove('active'));
+  if (el) el.classList.add('active');
   const existing = document.getElementById('mainVideo');
   if (existing) { existing.style.display = ''; return; }
   const iframe = document.createElement('iframe');
