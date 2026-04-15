@@ -160,10 +160,10 @@ a{text-decoration:none;}
 .filter-card__title{font-family:var(--font-display);font-weight:700;font-size:13.5px;color:var(--text-primary);margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;}
 .filter-card__title i{font-size:12px;color:var(--text-muted);cursor:pointer;transition:transform 0.2s;}
 .filter-group{display:flex;flex-direction:column;gap:10px;}
-.filter-check{display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;color:var(--text-secondary);}
+.filter-check{display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;color:var(--text-secondary);width:100%;}
 .filter-check input[type="checkbox"]{width:16px;height:16px;accent-color:var(--brand-navy);cursor:pointer;flex-shrink:0;}
-.filter-check span{flex:1;}
-.filter-check__count{font-size:11px;color:var(--text-muted);font-weight:500;}
+.filter-check span:not(.filter-check__count){flex:1;}
+.filter-check__count{font-size:11px;color:var(--text-muted);font-weight:500;padding-left:12px;}
 .filter-range{display:flex;gap:8px;align-items:center;}
 .filter-range input{flex:1;padding:9px 10px;border:1.5px solid var(--border);border-radius:var(--radius-xs);font-size:13px;font-family:var(--font-body);color:var(--text-primary);outline:none;transition:border-color 0.2s;background:#fff;min-width:0;}
 .filter-range input:focus{border-color:var(--brand-navy);}
@@ -415,13 +415,14 @@ a{text-decoration:none;}
   /* Product grid */
   .product-grid { grid-template-columns: repeat(2, 1fr); gap: 14px; }
 
-  /* Toolbar */
-  .listing-toolbar { flex-wrap: wrap; gap: 10px; padding: 12px 16px; }
-  .listing-toolbar__left { flex: 1 1 100%; }
-  .listing-toolbar__count { font-size: 13px; }
-  .listing-toolbar__right { flex: 1 1 100%; justify-content: space-between; }
+  /* Toolbar — single row on tablet */
+  .listing-toolbar { flex-wrap: nowrap; gap: 8px; padding: 8px 14px; }
+  .listing-toolbar__left { flex: 1; min-width: 0; gap: 8px; }
+  .listing-toolbar__count { font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .listing-toolbar__right { flex-shrink: 0; gap: 8px; }
   .listing-toolbar__sort { font-size: 12px; }
-  .listing-toolbar__sort select { font-size: 12px; padding: 6px 10px; }
+  .listing-toolbar__sort select { font-size: 12px; padding: 5px 8px; max-width: 140px; }
+  .listing-toolbar__sort span { display: none; }
 
   /* Breadcrumb */
   .breadcrumb { font-size: 12px; padding: 12px 0; }
@@ -490,10 +491,15 @@ a{text-decoration:none;}
   .product-card__price { font-size: 17px; }
   .product-card__meta { font-size: 11px; }
 
-  /* Toolbar stacks vertically */
-  .listing-toolbar { flex-direction: column; align-items: stretch; gap: 10px; padding: 12px 14px; }
-  .listing-toolbar__left { justify-content: flex-start; }
-  .listing-toolbar__right { justify-content: flex-start; flex-wrap: wrap; gap: 8px; }
+  /* Toolbar — compact single row on phone */
+  .listing-toolbar { flex-wrap: nowrap; gap: 6px; padding: 8px 12px; }
+  .listing-toolbar__left { flex: 1; min-width: 0; gap: 6px; align-items: center; }
+  .listing-toolbar__count { font-size: 11.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 120px; }
+  .listing-toolbar__right { flex-shrink: 0; gap: 6px; }
+  .listing-toolbar__sort select { font-size: 11.5px; padding: 4px 6px; max-width: 110px; }
+  .filter-toggle-btn { padding: 5px 10px; font-size: 11.5px; white-space: nowrap; }
+  .view-btn { width: 26px; height: 26px; }
+  #saveSearchBtn { display: none !important; }
 
   /* Pagination — compact for phone */
   .pagination { gap: 4px; flex-wrap: wrap; justify-content: center; }
@@ -672,11 +678,8 @@ a{text-decoration:none;}
           <label class="filter-check"><input type="checkbox" checked><span>All Equipment</span><span class="filter-check__count">500+</span></label>
           <label class="filter-check"><input type="checkbox"><span>Trucks</span><span class="filter-check__count">182</span></label>
           <label class="filter-check"><input type="checkbox"><span>Trailers</span><span class="filter-check__count">94</span></label>
-          <label class="filter-check"><input type="checkbox"><span>Buses & Coaches</span><span class="filter-check__count">56</span></label>
           <label class="filter-check"><input type="checkbox"><span>Forklifts</span><span class="filter-check__count">68</span></label>
-          <label class="filter-check"><input type="checkbox"><span>Cranes</span><span class="filter-check__count">34</span></label>
           <label class="filter-check"><input type="checkbox"><span>Construction</span><span class="filter-check__count">42</span></label>
-          <label class="filter-check"><input type="checkbox"><span>Agricultural</span><span class="filter-check__count">12</span></label>
         </div>
       </div>
 
@@ -689,53 +692,10 @@ a{text-decoration:none;}
           <label class="filter-check"><input type="checkbox"><span>MAN</span><span class="filter-check__count">52</span></label>
           <label class="filter-check"><input type="checkbox"><span>Scania</span><span class="filter-check__count">48</span></label>
           <label class="filter-check"><input type="checkbox"><span>CAT</span><span class="filter-check__count">38</span></label>
-          <label class="filter-check"><input type="checkbox"><span>Toyota</span><span class="filter-check__count">32</span></label>
-          <label class="filter-check"><input type="checkbox"><span>DAF</span><span class="filter-check__count">28</span></label>
-          <label class="filter-check"><input type="checkbox"><span>Hyster</span><span class="filter-check__count">18</span></label>
         </div>
       </div>
 
-      <!-- Price Range -->
-      <div class="filter-card">
-        <div class="filter-card__title">Price (AED) <i class="fi fi-rr-angle-small-up"></i></div>
-        <div class="filter-range">
-          <input type="text" placeholder="Min">
-          <span class="filter-range__sep">–</span>
-          <input type="text" placeholder="Max">
-        </div>
-      </div>
 
-      <!-- Year -->
-      <div class="filter-card">
-        <div class="filter-card__title">Year <i class="fi fi-rr-angle-small-up"></i></div>
-        <div class="filter-range">
-          <input type="text" placeholder="From">
-          <span class="filter-range__sep">–</span>
-          <input type="text" placeholder="To">
-        </div>
-      </div>
-
-      <!-- Location -->
-      <div class="filter-card">
-        <div class="filter-card__title">Location <i class="fi fi-rr-angle-small-up"></i></div>
-        <div class="filter-group">
-          <label class="filter-check"><input type="checkbox"><span>🇦🇪 UAE</span><span class="filter-check__count">210</span></label>
-          <label class="filter-check"><input type="checkbox"><span>🇸🇦 KSA</span><span class="filter-check__count">148</span></label>
-          <label class="filter-check"><input type="checkbox"><span>🇶🇦 Qatar</span><span class="filter-check__count">82</span></label>
-          <label class="filter-check"><input type="checkbox"><span>🇧🇭 Bahrain</span><span class="filter-check__count">60</span></label>
-        </div>
-      </div>
-
-      <!-- Condition -->
-      <div class="filter-card">
-        <div class="filter-card__title">Condition <i class="fi fi-rr-angle-small-up"></i></div>
-        <div class="filter-group">
-          <label class="filter-check"><input type="checkbox"><span>FAMCO Approved</span></label>
-          <label class="filter-check"><input type="checkbox"><span>Excellent</span></label>
-          <label class="filter-check"><input type="checkbox"><span>Good</span></label>
-          <label class="filter-check"><input type="checkbox"><span>Fair</span></label>
-        </div>
-      </div>
 
       <button class="filter-btn"><i class="fi fi-rr-filter" style="font-size:13px;display:flex;"></i> Apply Filters</button>
       <button class="filter-btn filter-btn--reset"><i class="fi fi-rr-refresh" style="font-size:13px;display:flex;"></i> Reset All</button>
