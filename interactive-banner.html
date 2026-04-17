@@ -3,30 +3,24 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FAMCO — Approved Marketplace</title>
+<title>FAMCO — Scroll Video</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,400;0,700;0,800;0,900;1,700&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
-html{scroll-behavior:auto;}
+html{scroll-behavior:auto;-webkit-overflow-scrolling:touch;}
 body{
-  background:#052424;color:#fff;
+  background:#000;
   overflow-x:hidden;
-  -webkit-font-smoothing:antialiased;
+  font-family:'DM Sans',sans-serif;
 }
 
-/* ═══════════════════════════════
-   SCROLL-DRIVEN VIDEO SECTION
-   The page is tall (500vh) to give
-   us room to scrub through the video
-═══════════════════════════════ */
 .video-scroll-container{
   position:relative;
-  height:500vh; /* total scrollable height for video scrub */
+  height:600vh;
 }
 
-/* Sticky wrapper pins the video to viewport while we scroll */
 .video-sticky{
   position:sticky;
   top:0;
@@ -35,7 +29,6 @@ body{
   overflow:hidden;
 }
 
-/* The video fills the viewport */
 .video-sticky video{
   position:absolute;
   top:50%;left:50%;
@@ -43,802 +36,854 @@ body{
   width:auto;height:auto;
   transform:translate(-50%,-50%);
   object-fit:cover;
+  display:none;
 }
 
-/* Dark overlay on video for text readability */
-.video-overlay{
-  position:absolute;inset:0;z-index:2;
-  pointer-events:none;
-  background:
-    linear-gradient(180deg,
-      rgba(5,36,36,.55) 0%,
-      rgba(5,36,36,.15) 30%,
-      rgba(5,36,36,.10) 50%,
-      rgba(5,36,36,.20) 70%,
-      rgba(5,36,36,.70) 100%
-    );
+.video-sticky canvas{
+  position:absolute;
+  top:0;left:0;
+  width:100%;height:100%;
+  object-fit:cover;
+  will-change:contents;
 }
 
-/* Scroll progress bar */
+/* ═══════════════════════════════
+   LOADING BAR (first visit only)
+═══════════════════════════════ */
+.frame-loader{
+  position:fixed;inset:0;
+  z-index:100;
+  background:#000;
+  display:flex;align-items:center;justify-content:center;
+  flex-direction:column;gap:14px;
+  transition:opacity .5s ease;
+}
+.frame-loader.hidden{opacity:0;pointer-events:none;}
+.frame-loader.done{display:none;}
+.frame-loader-bar{
+  width:220px;height:3px;background:rgba(255,255,255,.12);border-radius:2px;overflow:hidden;
+}
+.frame-loader-fill{
+  height:100%;width:0%;background:#FFD100;border-radius:2px;transition:width .08s linear;
+}
+.frame-loader-text{
+  font-family:'DM Sans',sans-serif;font-size:12px;color:rgba(255,255,255,.35);letter-spacing:.06em;
+}
+
 .scroll-progress{
   position:fixed;top:0;left:0;height:2px;
-  background:#abff02;z-index:999;width:0%;
+  background:#FFD100;z-index:999;width:0%;
   pointer-events:none;
-  box-shadow:0 0 12px rgba(171,255,2,.6);
+}
+
+/* ═══════════════════════════════
+   TITLE OVERLAYS
+═══════════════════════════════ */
+.title-overlay{
+  position:absolute;
+  left:0;top:0;bottom:0;
+  z-index:10;
+  display:flex;
+  align-items:center;
+  pointer-events:none;
+  opacity:0;
+  padding-left:clamp(40px,8vw,120px);
+  will-change:opacity,transform;
+}
+
+.title-text{
+  font-family:'Outfit',sans-serif;
+  font-weight:900;
+  font-size:clamp(36px,5vw,68px);
+  line-height:1.15;
+  letter-spacing:-1.5px;
+  text-align:left;
+  max-width:700px;
+  text-shadow:0 2px 24px rgba(0,0,0,.85), 0 0 80px rgba(0,0,0,.5);
+}
+
+.title-text .word{
+  display:inline-block;
+  opacity:0;
+  color:#FFD100;
+  text-shadow:0 2px 24px rgba(0,0,0,.85), 0 0 80px rgba(0,0,0,.5);
+  will-change:opacity,transform,color;
+}
+
+.title-text .word-space{
+  display:inline-block;
+  width:.35em;
+}
+
+/* Dark gradient scrim behind titles for contrast */
+.title-overlay::before{
+  content:'';
+  position:absolute;
+  left:0;top:0;bottom:0;
+  width:60%;
+  background:linear-gradient(90deg, rgba(0,0,0,.55) 0%, rgba(0,0,0,.3) 60%, transparent 100%);
+  pointer-events:none;
+  z-index:-1;
 }
 
 
 /* ═══════════════════════════════
-   TEXT SLIDES — overlaid on video
-   Each slide fades in/out at a
-   specific scroll position
+   FINAL SECTION — Hero + Search
 ═══════════════════════════════ */
-.slide{
-  position:absolute;inset:0;z-index:10;
-  display:flex;align-items:center;justify-content:center;
-  flex-direction:column;
-  padding:0 8vw;
+.final-hero{
+  position:absolute;
+  inset:0;
+  z-index:12;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 clamp(40px,8vw,120px);
+  gap:clamp(30px,4vw,80px);
   opacity:0;
   pointer-events:none;
-  transition:none; /* GSAP handles transitions */
+  will-change:opacity;
+  transform:translate3d(0,0,0); /* force GPU layer */
 }
-.slide.active{pointer-events:all;}
+.final-hero.active{
+  opacity:1;
+  pointer-events:all;
+}
 
-/* Slide content wrapper */
-.slide-content{
-  max-width:1100px;
+.final-hero::before{
+  content:'';
+  position:absolute;inset:0;
+  background:linear-gradient(90deg,
+    rgba(0,0,0,.75) 0%,
+    rgba(0,0,0,.5) 50%,
+    rgba(0,0,0,.65) 100%
+  );
+  z-index:-1;
+}
+
+.final-left{
+  flex:1;
+  max-width:560px;
+}
+
+.final-title{
+  font-family:'Outfit',sans-serif;
+  font-weight:900;
+  font-size:clamp(32px,4.5vw,56px);
+  line-height:1.25;
+  letter-spacing:-1.5px;
+  color:#fff;
+  margin-bottom:40px;
+}
+
+.final-title .highlight{
+  display:inline-block;
+  background:#FFD100;
+  color:#1A2F4A;
+  padding:2px 14px;
+  border-radius:5px;
+  font-style:italic;
+}
+
+.browse-cta{
+  display:inline-flex;
+  align-items:center;
+  gap:10px;
+  padding:14px 32px;
+  background:#FFD100;
+  color:#1A2F4A;
+  font-family:'Outfit',sans-serif;
+  font-weight:700;
+  font-size:16px;
+  letter-spacing:.02em;
+  border-radius:10px;
+  text-decoration:none;
+  transition:background .2s, transform .15s;
+}
+.browse-cta:hover{
+  background:#E6C200;
+  transform:translateY(-2px);
+}
+
+.search-card{
   width:100%;
+  max-width:420px;
+  background:#fff;
+  border-radius:16px;
+  padding:32px 28px 28px;
+  box-shadow:0 20px 60px rgba(0,0,0,.4);
+  flex-shrink:0;
 }
 
-/* Tag line (small label) */
-.s-tag{
-  font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.35em;
-  text-transform:uppercase;color:rgba(171,255,2,.65);
+.search-card-header{
   display:flex;align-items:center;gap:10px;
   margin-bottom:24px;
-  transform:translateY(20px);opacity:0;
 }
-.s-tag::before{
-  content:'';display:inline-block;
-  width:20px;height:1px;background:rgba(171,255,2,.5);
+.search-card-header .bar{
+  width:4px;height:24px;background:#FFD100;border-radius:2px;
 }
-.tag-dot{
-  width:6px;height:6px;border-radius:50%;background:#abff02;
-  flex-shrink:0;animation:blink 1.8s ease infinite;
+.search-card-header h3{
+  font-family:'Outfit',sans-serif;
+  font-weight:700;font-size:18px;
+  color:#1A2F4A;
 }
-@keyframes blink{0%,100%{opacity:1;}50%{opacity:.15;}}
 
-/* Headline */
-.s-headline{
-  font-family:'Barlow Condensed',sans-serif;
-  font-size:clamp(56px,11vw,148px);
-  font-weight:900;line-height:.88;
-  letter-spacing:-.02em;
-  text-transform:uppercase;
-  margin-bottom:28px;
+.form-group{
+  margin-bottom:18px;
 }
-.s-headline .line{
+.form-label{
   display:block;
-  overflow:hidden;
-}
-.s-headline .line-inner{
-  display:block;
-  transform:translateY(110%);
-}
-.s-headline .lime{color:#abff02;}
-
-/* Subtext */
-.s-sub{
   font-family:'DM Sans',sans-serif;
-  font-size:clamp(14px,1.2vw,18px);
-  font-weight:300;line-height:1.85;
-  color:rgba(255,255,255,.5);
-  max-width:480px;
-  margin-bottom:36px;
-  transform:translateY(30px);opacity:0;
+  font-size:11px;font-weight:600;
+  letter-spacing:.08em;text-transform:uppercase;
+  color:#9BA8B5;
+  margin-bottom:6px;
+}
+.form-select{
+  width:100%;
+  padding:12px 14px;
+  font-family:'DM Sans',sans-serif;
+  font-size:14px;color:#1A2F4A;
+  background:#fff;
+  border:1.5px solid #E2E8F0;
+  border-radius:10px;
+  appearance:none;
+  -webkit-appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg width='12' height='7' viewBox='0 0 12 7' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%239BA8B5' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;
+  background-position:right 14px center;
+  cursor:pointer;
+  transition:border-color .2s;
+}
+.form-select:focus{
+  outline:none;
+  border-color:#FFD100;
+}
+.form-select:hover{
+  border-color:#CBD5E0;
 }
 
-/* CTA buttons */
-.s-cta{
-  display:flex;gap:14px;flex-wrap:wrap;
-  transform:translateY(20px);opacity:0;
-}
-.btn{
-  display:inline-flex;align-items:center;gap:9px;padding:14px 36px;
-  font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;
-  letter-spacing:.1em;text-transform:uppercase;text-decoration:none;cursor:pointer;
-  transition:transform .22s ease,box-shadow .22s ease,background .18s ease,color .18s ease;
-}
-.btn-fill{background:#abff02;color:#052424;border:2px solid #abff02;}
-.btn-fill:hover{background:#c6ff3a;box-shadow:0 0 36px rgba(171,255,2,.28);transform:translateY(-2px);}
-.btn-ghost{background:transparent;color:rgba(255,255,255,.62);border:1.5px solid rgba(255,255,255,.18);}
-.btn-ghost:hover{border-color:rgba(171,255,2,.4);color:#abff02;}
-.btn svg{width:14px;height:14px;}
-
-/* Stat badges — positioned on slides */
-.slide-stats{
-  display:flex;gap:40px;margin-top:40px;
-  transform:translateY(30px);opacity:0;
-}
-.slide-stat{text-align:left;}
-.slide-stat-val{
-  font-family:'Barlow Condensed',sans-serif;
-  font-size:clamp(32px,4vw,56px);font-weight:900;
-  color:#abff02;line-height:1;
-}
-.slide-stat-label{
-  font-family:'Space Mono',monospace;font-size:8px;
-  letter-spacing:.2em;text-transform:uppercase;
-  color:rgba(255,255,255,.25);margin-top:6px;
+.form-row{
+  display:grid;grid-template-columns:1fr 1fr;gap:12px;
 }
 
-/* Centered layout variant */
-.slide.centered{
-  text-align:center;
-  align-items:center;
+.search-btn{
+  width:100%;
+  padding:14px;
+  background:#FFD100;
+  color:#1A2F4A;
+  font-family:'Outfit',sans-serif;
+  font-weight:700;font-size:16px;
+  letter-spacing:.02em;
+  border:none;
+  border-radius:10px;
+  cursor:pointer;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  transition:background .2s,transform .15s;
+  margin-top:6px;
 }
-.slide.centered .slide-content{
-  display:flex;flex-direction:column;align-items:center;
+.search-btn:hover{
+  background:#E6C200;
+  transform:translateY(-1px);
 }
-.slide.centered .s-sub{margin-left:auto;margin-right:auto;}
-.slide.centered .s-cta{justify-content:center;}
-.slide.centered .slide-stats{justify-content:center;}
-
-/* Right-aligned variant */
-.slide.right-align{
-  align-items:center;
-  justify-content:flex-end;
-}
-.slide.right-align .slide-content{
-  text-align:right;
-  display:flex;flex-direction:column;align-items:flex-end;
-}
-
-/* HUD elements */
-.hud-top-left,.hud-top-right,.hud-bottom-left,.hud-bottom-right{
-  position:absolute;z-index:15;
-  font-family:'Space Mono',monospace;font-size:9px;
-  letter-spacing:.2em;text-transform:uppercase;
-  color:rgba(171,255,2,.3);
-  pointer-events:none;
-}
-.hud-top-left{top:28px;left:28px;}
-.hud-top-right{top:28px;right:28px;text-align:right;}
-.hud-bottom-left{bottom:28px;left:28px;}
-.hud-bottom-right{bottom:28px;right:28px;text-align:right;}
-
-.hud-live{
-  display:flex;align-items:center;gap:7px;
-  color:rgba(171,255,2,.5);
-}
-.hud-live-dot{
-  width:5px;height:5px;border-radius:50%;
-  background:rgba(171,255,2,.8);
-  animation:blink 1.4s ease infinite;
+.search-btn svg{
+  width:16px;height:16px;
 }
 
-/* Scroll hint */
-.scroll-hint{
-  position:absolute;bottom:40px;left:50%;
-  transform:translateX(-50%);z-index:20;
-  display:flex;flex-direction:column;align-items:center;gap:8px;
-  opacity:0;
-  transition:opacity .6s ease;
+.browse-link{
+  display:block;text-align:center;
+  margin-top:14px;
+  font-size:13px;color:#9BA8B5;
 }
-.scroll-hint.visible{opacity:1;}
-.scroll-hint span{
-  font-family:'Space Mono',monospace;font-size:8px;
-  letter-spacing:.25em;text-transform:uppercase;
-  color:rgba(255,255,255,.22);
+.browse-link a{
+  color:#0066B3;text-decoration:none;font-weight:500;
 }
-.scroll-tick{
-  width:1px;height:36px;background:rgba(171,255,2,.1);
-  position:relative;overflow:hidden;
-}
-.scroll-tick::after{
-  content:'';position:absolute;top:-100%;left:0;
-  width:100%;height:100%;
-  background:rgba(171,255,2,.6);
-  animation:tickDown 2.2s ease-in-out infinite;
-}
-@keyframes tickDown{0%{top:-100%;}50%{top:100%;}100%{top:100%;}}
-
-/* Frame counter */
-.frame-counter{
-  position:absolute;bottom:28px;left:50%;
-  transform:translateX(-50%);z-index:20;
-  font-family:'Space Mono',monospace;font-size:9px;
-  letter-spacing:.2em;color:rgba(171,255,2,.2);
-}
-
-
-/* ═══════════════════════════════
-   CONTENT SECTIONS BELOW VIDEO
-═══════════════════════════════ */
-.content-after{
-  position:relative;z-index:5;
-  background:#052424;
-}
-
-/* Section: Platform */
-#s-platform{
-  background:#041c1c;padding:130px 8vw 120px;
-  position:relative;overflow:hidden;
-}
-#s-platform::before{
-  content:'';position:absolute;top:0;left:0;right:0;height:1px;
-  background:linear-gradient(90deg,transparent,rgba(171,255,2,.15),transparent);
-}
-.plat-inner{max-width:1200px;margin:0 auto;}
-.plat-top{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:end;margin-bottom:80px;}
-.plat-hl{
-  font-family:'Barlow Condensed',sans-serif;
-  font-size:clamp(52px,7vw,88px);font-weight:900;line-height:.95;
-  letter-spacing:-.02em;text-transform:uppercase;
-}
-.plat-hl em{color:#abff02;font-style:italic;}
-.plat-right{padding-bottom:6px;}
-.plat-desc{font-size:15px;line-height:1.82;color:rgba(255,255,255,.38);font-weight:300;max-width:380px;margin-bottom:28px;}
-.plat-link{
-  font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.22em;
-  text-transform:uppercase;color:rgba(171,255,2,.6);text-decoration:none;
-  display:inline-flex;align-items:center;gap:8px;transition:color .2s,gap .2s;
-}
-.plat-link:hover{color:#abff02;gap:12px;}
-
-.plat-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;}
-.plat-card{
-  padding:36px 28px 32px;background:rgba(5,36,36,.6);
-  border:1px solid rgba(171,255,2,.07);
-  position:relative;overflow:hidden;
-}
-.plat-card::after{content:'';position:absolute;bottom:0;left:0;height:1px;width:0;background:#abff02;transition:width .6s ease;}
-.plat-card:hover::after{width:100%;}
-.plat-card:hover{background:rgba(5,36,36,.9);}
-.pc-num{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:.2em;color:rgba(171,255,2,.3);margin-bottom:20px;}
-.pc-title{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:800;text-transform:uppercase;letter-spacing:.03em;margin-bottom:10px;}
-.pc-desc{font-size:13px;line-height:1.72;color:rgba(255,255,255,.35);font-weight:300;}
-
-
-/* Section: Stats */
-#s-stats{
-  background:#020e0e;padding:120px 8vw;
-  position:relative;overflow:hidden;
-}
-.stats-grid-bg{
-  position:absolute;inset:0;pointer-events:none;
-  background-image:linear-gradient(rgba(171,255,2,.022) 1px,transparent 1px),linear-gradient(90deg,rgba(171,255,2,.022) 1px,transparent 1px);
-  background-size:60px 60px;
-}
-.stats-inner{max-width:1200px;margin:0 auto;}
-.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:2px;}
-.stats-cell{
-  padding:50px 36px;background:rgba(5,36,36,.4);border:1px solid rgba(171,255,2,.06);
-  text-align:center;
-}
-.stats-cell:hover{background:rgba(5,36,36,.7);}
-.stat-big{
-  font-family:'Barlow Condensed',sans-serif;
-  font-size:clamp(52px,7vw,88px);font-weight:900;color:#abff02;line-height:1;
-  letter-spacing:-.02em;
-}
-.stat-unit{font-size:.55em;vertical-align:top;margin-top:.2em;display:inline-block;}
-.stat-name{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,.25);margin-top:14px;}
-.stat-sub{font-size:12px;color:rgba(255,255,255,.2);font-weight:300;margin-top:6px;font-family:'DM Sans',sans-serif;}
-
-
-/* Section: CTA */
-#s-cta{
-  background:#052424;padding:150px 8vw 130px;
-  position:relative;overflow:hidden;
-}
-.cta-grid-bg{
-  position:absolute;inset:0;pointer-events:none;
-  background-image:linear-gradient(rgba(171,255,2,.02) 1px,transparent 1px),linear-gradient(90deg,rgba(171,255,2,.02) 1px,transparent 1px);
-  background-size:64px 64px;
-}
-.cta-glow{
-  position:absolute;top:-200px;left:50%;transform:translateX(-50%);
-  width:700px;height:400px;pointer-events:none;
-  background:radial-gradient(ellipse,rgba(171,255,2,.06) 0%,transparent 70%);
-}
-.cta-inner-s{position:relative;z-index:2;max-width:900px;margin:0 auto;}
-.cta-hl{
-  font-family:'Barlow Condensed',sans-serif;
-  font-size:clamp(56px,10vw,130px);font-weight:900;line-height:.9;
-  letter-spacing:-.02em;text-transform:uppercase;margin-bottom:32px;
-}
-.cta-hl em{color:#abff02;font-style:italic;}
-.cta-sub-text{font-size:16px;line-height:1.78;color:rgba(255,255,255,.32);max-width:480px;font-weight:300;margin-bottom:50px;}
-.cta-btns{display:flex;gap:14px;flex-wrap:wrap;}
-
-/* Reveal helpers */
-.rl{overflow:hidden;}
-.rl-in{display:block;transform:translateY(105%);opacity:0;}
-.fr{opacity:0;transform:translateY(50px);}
-
-
-/* Footer */
-footer{
-  background:#020c0c;padding:40px 8vw;
-  border-top:1px solid rgba(171,255,2,.06);
-  display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;
-}
-.footer-brand{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;}
-.footer-brand span{font-family:'Space Mono',monospace;font-size:8px;font-weight:400;letter-spacing:.25em;color:rgba(171,255,2,.4);display:block;margin-top:2px;}
-.footer-copy{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:.15em;color:rgba(255,255,255,.18);}
+.browse-link a:hover{text-decoration:underline;}
 
 
 /* ═══════════════════════════════
    RESPONSIVE
 ═══════════════════════════════ */
 @media(max-width:1024px){
-  .plat-top{grid-template-columns:1fr;}
-  .stats-row{grid-template-columns:repeat(2,1fr);}
-  .plat-cards{grid-template-columns:1fr 1fr;}
-  .slide-stats{gap:24px;}
+  .final-hero{flex-direction:column;justify-content:center;text-align:center;padding:40px 6vw;}
+  .final-left{max-width:100%;}
+  .search-card{max-width:440px;}
 }
 @media(max-width:768px){
-  .video-scroll-container{height:400vh;}
-  #s-platform,#s-cta{padding:80px 6vw;}
-  #s-stats{padding:80px 6vw;}
-  .plat-cards{grid-template-columns:1fr;}
-  .stats-row{grid-template-columns:1fr 1fr;}
-  .slide{padding:0 6vw;}
-  .s-headline{font-size:clamp(44px,14vw,90px);}
-  .slide-stats{flex-wrap:wrap;gap:20px;}
-  .slide.right-align{justify-content:center;}
-  .slide.right-align .slide-content{text-align:left;align-items:flex-start;}
+  .title-overlay{padding-left:6vw;}
+  .title-text{font-size:clamp(28px,8vw,48px);letter-spacing:-0.5px;max-width:90vw;}
+  .final-title{font-size:clamp(28px,7vw,42px);}
+  .search-card{padding:24px 20px 22px;}
 }
 @media(max-width:480px){
-  .stats-row{grid-template-columns:1fr;}
-  .plat-top{gap:40px;}
-  .slide-stats{flex-direction:column;gap:16px;}
+  .title-text{font-size:clamp(24px,7vw,36px);}
+  .final-title{font-size:clamp(24px,7vw,34px);}
+  .form-row{grid-template-columns:1fr;}
 }
 </style>
 </head>
 <body>
 
-<!-- Scroll progress bar -->
+<!-- Loading bar (shown on first visit while extracting, hidden on cached revisit) -->
+<div class="frame-loader" id="frameLoader">
+  <div class="frame-loader-bar"><div class="frame-loader-fill" id="loaderFill"></div></div>
+  <div class="frame-loader-text" id="loaderText">Loading...</div>
+</div>
+
 <div class="scroll-progress" id="scrollProgress"></div>
 
-
-<!-- ═══════════════════════════════
-     SCROLL-DRIVEN VIDEO HERO
-═══════════════════════════════ -->
 <div class="video-scroll-container" id="videoScrollContainer">
   <div class="video-sticky">
 
-    <!-- Video element — muted, no autoplay, preloaded -->
     <video id="scrollVideo" muted playsinline preload="auto">
-      <source src="famco-marketplace3.1.mp4" type="video/mp4">
+      <source src="famco-marketplace3.1-compressed.mp4" type="video/mp4">
     </video>
+    <canvas id="frameCanvas"></canvas>
 
-    <!-- Dark overlay -->
-    <div class="video-overlay"></div>
-
-    <!-- HUD corners -->
-    <div class="hud-top-left">
-      <div class="hud-live"><span class="hud-live-dot"></span> FAMCO APPROVED</div>
-    </div>
-    <div class="hud-top-right">FAMCO · MARKETPLACE</div>
-    <div class="hud-bottom-left" id="hudFrameInfo">FRAME 0000</div>
-    <div class="hud-bottom-right">
-      <div>150-POINT INSPECTION · CERTIFIED</div>
+    <!-- Title 1: 0–12% scroll -->
+    <div class="title-overlay" id="title0" data-in="0.0" data-out="0.12">
+      <div class="title-text">Submit Vehicle</div>
     </div>
 
-    <!-- Scroll hint (visible at start) -->
-    <div class="scroll-hint" id="scrollHint">
-      <span>Scroll to explore</span>
-      <div class="scroll-tick"></div>
+    <!-- Title 2: 16–30% scroll -->
+    <div class="title-overlay" id="title1" data-in="0.16" data-out="0.30">
+      <div class="title-text">150-Point Inspection & FAMCO Certification</div>
     </div>
 
+    <!-- Title 3: 35–48% scroll -->
+    <div class="title-overlay" id="title2" data-in="0.35" data-out="0.48">
+      <div class="title-text">Buy with<br>Confidence</div>
+    </div>
 
-    <!-- ── SLIDE 1: Truck Arrives (0-25% of video) ── -->
-    <div class="slide" id="slide0" data-in="0" data-out="0.25">
-      <div class="slide-content">
-        <div class="s-tag"><span class="tag-dot"></span> FAMCO Approved Marketplace</div>
-        <h1 class="s-headline">
-          <span class="line"><span class="line-inner">TRUSTED.</span></span>
-          <span class="line"><span class="line-inner lime">INSPECTED.</span></span>
-          <span class="line"><span class="line-inner">APPROVED.</span></span>
+    <!-- FINAL HERO -->
+    <div class="final-hero" id="finalHero">
+      <div class="final-left">
+        <h1 class="final-title">
+          <span style="white-space:nowrap">The GCC's Most Trusted</span> <span class="highlight">FAMCO Approved</span> Marketplace
         </h1>
-        <p class="s-sub">The GCC's most trusted used commercial vehicle marketplace. Al-Futtaim backed, 150-point inspected, and finance-ready.</p>
-        <div class="slide-stats">
-          <div class="slide-stat">
-            <div class="slide-stat-val">150+</div>
-            <div class="slide-stat-label">Point Inspection</div>
-          </div>
-          <div class="slide-stat">
-            <div class="slide-stat-val">100%</div>
-            <div class="slide-stat-label">Certified</div>
-          </div>
-          <div class="slide-stat">
-            <div class="slide-stat-val">4</div>
-            <div class="slide-stat-label">GCC Markets</div>
-          </div>
+        <a href="listing.html" class="browse-cta">Browse Equipment <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="18" height="18"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+      </div>
+
+      <div class="search-card">
+        <div class="search-card-header">
+          <div class="bar"></div>
+          <h3>Quick Search</h3>
         </div>
-      </div>
-    </div>
 
-
-    <!-- ── SLIDE 2: FAMCO Inspection (25-50% of video) ── -->
-    <div class="slide centered" id="slide1" data-in="0.25" data-out="0.50">
-      <div class="slide-content">
-        <div class="s-tag"><span class="tag-dot"></span> 150-Point Inspection</div>
-        <h2 class="s-headline">
-          <span class="line"><span class="line-inner">EVERY DETAIL.</span></span>
-          <span class="line"><span class="line-inner lime">CHECKED.</span></span>
-        </h2>
-        <p class="s-sub">Expert FAMCO technicians inspect every component — engine, body, chassis, cabin, and electronics. Nothing gets past our standards.</p>
-      </div>
-    </div>
-
-
-    <!-- ── SLIDE 3: Certified & Restored (50-75% of video) ── -->
-    <div class="slide right-align" id="slide2" data-in="0.50" data-out="0.75">
-      <div class="slide-content">
-        <div class="s-tag"><span class="tag-dot"></span> FAMCO Certified</div>
-        <h2 class="s-headline">
-          <span class="line"><span class="line-inner">FAMCO</span></span>
-          <span class="line"><span class="line-inner lime">APPROVED.</span></span>
-        </h2>
-        <p class="s-sub">Reconditioned to premium standards. Every vehicle receives the official FAMCO Approved certificate — your guarantee of quality and trust.</p>
-      </div>
-    </div>
-
-
-    <!-- ── SLIDE 4: Buyer Purchase & CTA (75-100% of video) ── -->
-    <div class="slide centered" id="slide3" data-in="0.75" data-out="1.0">
-      <div class="slide-content">
-        <div class="s-tag"><span class="tag-dot"></span> Ready for You</div>
-        <h2 class="s-headline">
-          <span class="line"><span class="line-inner">FIND YOUR</span></span>
-          <span class="line"><span class="line-inner lime">PERFECT</span></span>
-          <span class="line"><span class="line-inner">TRUCK.</span></span>
-        </h2>
-        <p class="s-sub">Browse FAMCO-certified commercial vehicles. Finance-ready, escrow-protected, delivered across UAE, KSA, Qatar & Bahrain.</p>
-        <div class="s-cta">
-          <a href="#" class="btn btn-fill">Browse Vehicles <svg viewBox="0 0 24 24" stroke-width="2.5" fill="none" stroke="currentColor"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
-          <a href="#" class="btn btn-ghost">Contact Sales</a>
+        <div class="form-group">
+          <label class="form-label">Category</label>
+          <select class="form-select">
+            <option>All Categories</option>
+            <option>Trucks</option>
+            <option>Trailers</option>
+            <option>Buses & Coaches</option>
+            <option>Forklifts</option>
+            <option>Cranes</option>
+            <option>Construction</option>
+            <option>Special Purpose</option>
+            <option>Agricultural</option>
+          </select>
         </div>
-      </div>
-    </div>
 
-  </div><!-- /.video-sticky -->
-</div><!-- /.video-scroll-container -->
+        <div class="form-group">
+          <label class="form-label">Brand</label>
+          <select class="form-select">
+            <option>All Brands</option>
+            <option>Volvo</option>
+            <option>Mercedes-Benz</option>
+            <option>MAN</option>
+            <option>Scania</option>
+            <option>DAF</option>
+            <option>Renault</option>
+            <option>Isuzu</option>
+            <option>Hino</option>
+          </select>
+        </div>
 
-
-<!-- ═══════════════════════════════
-     CONTENT SECTIONS (after video)
-═══════════════════════════════ -->
-<div class="content-after">
-
-  <!-- The FAMCO Process -->
-  <section id="s-platform">
-    <div class="plat-inner">
-      <div class="plat-top">
-        <div>
-          <div class="s-tag" style="font-size:9px;letter-spacing:.3em;color:rgba(171,255,2,.55);margin-bottom:20px;"><span class="tag-dot"></span> The FAMCO Process</div>
-          <div class="plat-hl">
-            <div class="rl"><span class="rl-in">Buy with</span></div>
-            <div class="rl"><span class="rl-in">total <em>confidence.</em></span></div>
+        <div class="form-group">
+          <div class="form-row">
+            <div>
+              <label class="form-label">Year From</label>
+              <select class="form-select">
+                <option>Any</option>
+                <option>2024</option>
+                <option>2023</option>
+                <option>2022</option>
+                <option>2021</option>
+                <option>2020</option>
+                <option>2019</option>
+                <option>2018</option>
+                <option>2017</option>
+                <option>2016</option>
+                <option>2015</option>
+              </select>
+            </div>
+            <div>
+              <label class="form-label">Year To</label>
+              <select class="form-select">
+                <option>Any</option>
+                <option>2024</option>
+                <option>2023</option>
+                <option>2022</option>
+                <option>2021</option>
+                <option>2020</option>
+                <option>2019</option>
+                <option>2018</option>
+                <option>2017</option>
+                <option>2016</option>
+                <option>2015</option>
+              </select>
+            </div>
           </div>
         </div>
-        <div class="plat-right fr">
-          <p class="plat-desc">Every vehicle on FAMCO Marketplace is backed by Al-Futtaim's rigorous 150-point inspection, professional reconditioning, and official certification — so you never have to guess.</p>
-          <a href="#" class="plat-link">Explore all vehicles <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
-        </div>
-      </div>
 
-      <div class="plat-cards">
-        <div class="plat-card fr">
-          <div class="pc-num">01</div>
-          <div class="pc-title">150-Point Inspection</div>
-          <p class="pc-desc">Engine, chassis, cabin, electronics, body — every detail is checked by certified FAMCO technicians before a vehicle can be listed.</p>
-        </div>
-        <div class="plat-card fr">
-          <div class="pc-num">02</div>
-          <div class="pc-title">Professional Reconditioning</div>
-          <p class="pc-desc">Vehicles are restored to premium standards — dent-free, polished, mechanically sound, and ready for their next owner.</p>
-        </div>
-        <div class="plat-card fr">
-          <div class="pc-num">03</div>
-          <div class="pc-title">Certified & Delivered</div>
-          <p class="pc-desc">Official FAMCO Approved certificate. Finance-ready, escrow-protected, and delivered across UAE, KSA, Qatar & Bahrain.</p>
-        </div>
+        <button class="search-btn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          Search Equipment
+        </button>
+
+        <div class="browse-link">or <a href="listing.html">browse all 500+ listings</a></div>
       </div>
     </div>
-  </section>
 
-
-  <!-- Stats -->
-  <section id="s-stats">
-    <div class="stats-grid-bg"></div>
-    <div class="stats-inner">
-      <div class="stats-row">
-        <div class="stats-cell">
-          <div class="stat-big"><span class="count" data-target="150" data-suffix="+">0+</span></div>
-          <div class="stat-name">Point Inspection</div>
-          <div class="stat-sub">Every vehicle, every time</div>
-        </div>
-        <div class="stats-cell">
-          <div class="stat-big"><span class="count" data-target="500" data-suffix="+">0+</span></div>
-          <div class="stat-name">Vehicles Certified</div>
-          <div class="stat-sub">And counting</div>
-        </div>
-        <div class="stats-cell">
-          <div class="stat-big"><span class="count" data-target="4" data-suffix="">0</span></div>
-          <div class="stat-name">GCC Markets</div>
-          <div class="stat-sub">UAE · KSA · Qatar · Bahrain</div>
-        </div>
-        <div class="stats-cell">
-          <div class="stat-big"><span class="count" data-target="100" data-suffix="%">0%</span></div>
-          <div class="stat-name">Escrow Protected</div>
-          <div class="stat-sub">Secure transactions guaranteed</div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-
-  <!-- Final CTA -->
-  <section id="s-cta">
-    <div class="cta-grid-bg"></div>
-    <div class="cta-glow"></div>
-    <div class="cta-inner-s">
-      <div class="s-tag" style="font-size:9px;letter-spacing:.3em;color:rgba(171,255,2,.55);margin-bottom:20px;"><span class="tag-dot"></span> Get Started</div>
-      <div class="cta-hl">
-        <div class="rl"><span class="rl-in">Find your</span></div>
-        <div class="rl"><span class="rl-in"><em>next truck</em></span></div>
-        <div class="rl"><span class="rl-in">today.</span></div>
-      </div>
-      <p class="cta-sub-text fr">Browse FAMCO-certified commercial vehicles. Al-Futtaim backed, 150-point inspected, finance-ready, and delivered across the GCC.</p>
-      <div class="cta-btns fr">
-        <a href="#" class="btn btn-fill">Browse Vehicles <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
-        <a href="#" class="btn btn-ghost">Contact Sales</a>
-      </div>
-    </div>
-  </section>
-
-</div><!-- /.content-after -->
-
-
-<!-- Footer -->
-<footer>
-  <div class="footer-brand">FAMCO<span>Approved Marketplace</span></div>
-  <div class="footer-copy">© 2025 FAMCO. All rights reserved.</div>
-</footer>
-
-
-<!-- ═══════════════════════════════
-     SCRIPTS
-═══════════════════════════════ -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  </div>
+</div>
 
 <script>
-gsap.registerPlugin(ScrollTrigger);
-
 /* ═══════════════════════════════
-   SCROLL-DRIVEN VIDEO PLAYBACK
-   Maps scroll position → video.currentTime
+   SPLIT TITLES INTO WORDS
 ═══════════════════════════════ */
 (function(){
-  var video      = document.getElementById('scrollVideo');
-  var container  = document.getElementById('videoScrollContainer');
-  var scrollHint = document.getElementById('scrollHint');
-  var hudFrame   = document.getElementById('hudFrameInfo');
-
-  if(!video || !container) return;
-
-  var videoDuration = 0;
-  var isReady       = false;
-  var rafId         = null;
-  var currentTarget = 0;
-  var currentTime   = 0;
-
-  // Wait for video metadata to load
-  video.addEventListener('loadedmetadata', function(){
-    videoDuration = video.duration;
-    isReady = true;
-
-    // Show scroll hint
-    scrollHint.classList.add('visible');
-
-    // Trigger initial slide
-    updateSlides(0);
-
-    // Start the smooth scrub loop
-    smoothScrub();
+  document.querySelectorAll('.title-text').forEach(function(el){
+    var nodes = Array.prototype.slice.call(el.childNodes);
+    var items = [];
+    nodes.forEach(function(node){
+      if(node.nodeName === 'BR'){
+        items.push({type:'br'});
+      } else {
+        node.textContent.split(/(\s+)/).forEach(function(w){
+          if(!w) return;
+          if(/^\s+$/.test(w)) items.push({type:'space'});
+          else items.push({type:'word', text:w});
+        });
+      }
+    });
+    el.innerHTML = '';
+    items.forEach(function(item){
+      if(item.type === 'br'){
+        el.appendChild(document.createElement('br'));
+      } else if(item.type === 'space'){
+        var sp = document.createElement('span');
+        sp.className = 'word word-space';
+        el.appendChild(sp);
+      } else {
+        var span = document.createElement('span');
+        span.className = 'word';
+        span.textContent = item.text;
+        el.appendChild(span);
+      }
+    });
   });
-
-  // Force load on iOS
-  video.load();
-
-  // Smooth interpolation loop for buttery video scrubbing
-  function smoothScrub(){
-    if(!isReady) { rafId = requestAnimationFrame(smoothScrub); return; }
-
-    // Calculate target time from scroll position
-    var rect     = container.getBoundingClientRect();
-    var total    = container.offsetHeight - window.innerHeight;
-    var scrolled = -rect.top;
-    var progress = Math.max(0, Math.min(1, scrolled / total));
-
-    currentTarget = progress * videoDuration;
-
-    // Lerp toward target for smooth motion
-    var diff = currentTarget - currentTime;
-    currentTime += diff * 0.12; // lower = smoother, higher = snappier
-
-    // Clamp
-    currentTime = Math.max(0, Math.min(videoDuration, currentTime));
-
-    // Set video time
-    if(Math.abs(video.currentTime - currentTime) > 0.01){
-      video.currentTime = currentTime;
-    }
-
-    // Update HUD frame counter
-    var frameNum = Math.round(currentTime * 30); // assume 30fps
-    if(hudFrame) hudFrame.textContent = 'FRAME ' + String(frameNum).padStart(4,'0');
-
-    // Update slides
-    updateSlides(progress);
-
-    // Update scroll progress bar
-    var pageTotal   = document.documentElement.scrollHeight - window.innerHeight;
-    var pageScroll  = window.scrollY || window.pageYOffset;
-    var pageProgress = pageTotal > 0 ? pageScroll / pageTotal : 0;
-    document.getElementById('scrollProgress').style.width = (pageProgress * 100) + '%';
-
-    // Hide scroll hint after scrolling
-    if(progress > 0.02){
-      scrollHint.classList.remove('visible');
-    } else {
-      scrollHint.classList.add('visible');
-    }
-
-    rafId = requestAnimationFrame(smoothScrub);
-  }
-
-
-  /* ═══════════════════════════════
-     SLIDE TRANSITIONS
-     Each slide has data-in / data-out
-     defining when it appears/disappears
-  ═══════════════════════════════ */
-  var slides = document.querySelectorAll('.slide');
-  var activeSlideIndex = -1;
-
-  function updateSlides(progress){
-    slides.forEach(function(slide, i){
-      var inAt  = parseFloat(slide.dataset.in);
-      var outAt = parseFloat(slide.dataset.out);
-
-      // Calculate slide's own progress within its range
-      var range    = outAt - inAt;
-      var fadeZone = 0.03; // 3% of total scroll for fade transition
-      var slideProgress = (progress - inAt) / range;
-
-      // Determine opacity based on position within range
-      var opacity = 0;
-      if(progress >= inAt && progress <= outAt){
-        // Fade in zone
-        var fadeInEnd = inAt + fadeZone;
-        // Fade out zone
-        var fadeOutStart = outAt - fadeZone;
-
-        if(progress < fadeInEnd){
-          opacity = (progress - inAt) / fadeZone;
-        } else if(progress > fadeOutStart){
-          opacity = (outAt - progress) / fadeZone;
-        } else {
-          opacity = 1;
-        }
-        opacity = Math.max(0, Math.min(1, opacity));
-      }
-
-      slide.style.opacity = opacity;
-
-      // Activate/deactivate slide
-      if(opacity > 0.1 && !slide.classList.contains('active')){
-        slide.classList.add('active');
-        animateSlideIn(slide);
-      } else if(opacity <= 0.05){
-        slide.classList.remove('active');
-        resetSlide(slide);
-      }
-    });
-  }
-
-  function animateSlideIn(slide){
-    var tag      = slide.querySelector('.s-tag');
-    var lines    = slide.querySelectorAll('.line-inner');
-    var sub      = slide.querySelector('.s-sub');
-    var cta      = slide.querySelector('.s-cta');
-    var stats    = slide.querySelector('.slide-stats');
-
-    var tl = gsap.timeline({defaults:{ease:'expo.out'}});
-
-    if(tag){
-      tl.fromTo(tag, {y:20, opacity:0}, {y:0, opacity:1, duration:.6}, 0);
-    }
-    lines.forEach(function(line, i){
-      tl.fromTo(line, {y:'110%'}, {y:'0%', duration:.9}, 0.1 + i * 0.08);
-    });
-    if(sub){
-      tl.fromTo(sub, {y:30, opacity:0}, {y:0, opacity:1, duration:.7}, 0.3);
-    }
-    if(cta){
-      tl.fromTo(cta, {y:20, opacity:0}, {y:0, opacity:1, duration:.6}, 0.45);
-    }
-    if(stats){
-      tl.fromTo(stats, {y:30, opacity:0}, {y:0, opacity:1, duration:.7}, 0.5);
-    }
-  }
-
-  function resetSlide(slide){
-    var tag   = slide.querySelector('.s-tag');
-    var lines = slide.querySelectorAll('.line-inner');
-    var sub   = slide.querySelector('.s-sub');
-    var cta   = slide.querySelector('.s-cta');
-    var stats = slide.querySelector('.slide-stats');
-
-    if(tag)   gsap.set(tag, {y:20, opacity:0});
-    lines.forEach(function(line){ gsap.set(line, {y:'110%'}); });
-    if(sub)   gsap.set(sub, {y:30, opacity:0});
-    if(cta)   gsap.set(cta, {y:20, opacity:0});
-    if(stats) gsap.set(stats, {y:30, opacity:0});
-  }
-
 })();
 
 
 /* ═══════════════════════════════
-   CONTENT SECTION SCROLL ANIMATIONS
+   IndexedDB FRAME CACHE + SCROLL
 ═══════════════════════════════ */
+(function(){
+  var video     = document.getElementById('scrollVideo');
+  var canvas    = document.getElementById('frameCanvas');
+  var ctx       = canvas.getContext('2d');
+  var container = document.getElementById('videoScrollContainer');
+  var bar       = document.getElementById('scrollProgress');
+  var finalHero = document.getElementById('finalHero');
+  var loader    = document.getElementById('frameLoader');
+  var loaderFill= document.getElementById('loaderFill');
+  var loaderText= document.getElementById('loaderText');
 
-/* Helper: reveal .rl-in lines */
-function revealLines(trigger, els){
-  gsap.from(els, {
-    y:'105%', opacity:0, duration:.9, stagger:.1, ease:'expo.out',
-    scrollTrigger:{trigger:trigger, start:'top 78%', toggleActions:'play none none none'}
+  if(!video || !container || !canvas) return;
+
+  var frames       = [];   // ImageBitmap array
+  var totalFrames  = 0;
+  var FPS          = 24;   // 24fps — good balance of smoothness vs cache size
+  var useDuration  = 0;
+  var currentFrame = -1;
+  var canvasW = 0, canvasH = 0;
+
+  var DB_NAME    = 'famco-frames';
+  var DB_VERSION = 1;
+  var STORE_NAME = 'frames';
+  var CACHE_KEY  = 'famco-marketplace3.1-v2'; // change if video changes
+
+  /* ═══════════════════════════════
+     IndexedDB helpers
+  ═══════════════════════════════ */
+  function openDB(){
+    return new Promise(function(resolve, reject){
+      var req = indexedDB.open(DB_NAME, DB_VERSION);
+      req.onupgradeneeded = function(e){
+        var db = e.target.result;
+        if(!db.objectStoreNames.contains(STORE_NAME)){
+          db.createObjectStore(STORE_NAME);
+        }
+      };
+      req.onsuccess = function(e){ resolve(e.target.result); };
+      req.onerror   = function(){ reject(req.error); };
+    });
+  }
+
+  function dbGet(db, key){
+    return new Promise(function(resolve, reject){
+      var tx = db.transaction(STORE_NAME, 'readonly');
+      var req = tx.objectStore(STORE_NAME).get(key);
+      req.onsuccess = function(){ resolve(req.result || null); };
+      req.onerror   = function(){ reject(req.error); };
+    });
+  }
+
+  function dbPut(db, key, value){
+    return new Promise(function(resolve, reject){
+      var tx = db.transaction(STORE_NAME, 'readwrite');
+      var req = tx.objectStore(STORE_NAME).put(value, key);
+      req.onsuccess = function(){ resolve(); };
+      req.onerror   = function(){ reject(req.error); };
+    });
+  }
+
+  /* ═══════════════════════════════
+     Load cached frames from IDB
+     Returns array of Blob or null
+  ═══════════════════════════════ */
+  function loadFromCache(db){
+    return dbGet(db, CACHE_KEY).then(function(data){
+      if(!data || !data.blobs || !data.w || !data.h) return null;
+      canvasW = data.w;
+      canvasH = data.h;
+      totalFrames = data.blobs.length;
+      useDuration = data.useDuration || 0;
+      // Convert blobs → ImageBitmap
+      var promises = data.blobs.map(function(blob){
+        return createImageBitmap(blob);
+      });
+      return Promise.all(promises);
+    });
+  }
+
+  /* ═══════════════════════════════
+     Extract frames from video + save to IDB
+  ═══════════════════════════════ */
+  function extractAndCache(db){
+    return new Promise(function(resolve){
+      var duration = video.duration;
+      useDuration = Math.max(0, duration - 1.5);
+      totalFrames = Math.ceil(useDuration * FPS);
+      if(totalFrames < 1){ resolve([]); return; }
+
+      var vw = video.videoWidth;
+      var vh = video.videoHeight;
+      var scale = Math.min(1, 960 / Math.max(vw, vh)); // 960px cap for smaller cache
+      canvasW = Math.round(vw * scale);
+      canvasH = Math.round(vh * scale);
+
+      var tempCanvas = document.createElement('canvas');
+      tempCanvas.width  = canvasW;
+      tempCanvas.height = canvasH;
+      var tempCtx = tempCanvas.getContext('2d');
+
+      var bitmaps = [];
+      var blobs   = [];
+      var idx = 0;
+
+      function grabNext(){
+        if(idx >= totalFrames){
+          // Save to IDB in background
+          dbPut(db, CACHE_KEY, {
+            blobs: blobs,
+            w: canvasW,
+            h: canvasH,
+            useDuration: useDuration,
+            ts: Date.now()
+          }).catch(function(){});
+          resolve(bitmaps);
+          return;
+        }
+        video.currentTime = (idx / totalFrames) * useDuration;
+      }
+
+      video.onseeked = function(){
+        tempCtx.drawImage(video, 0, 0, canvasW, canvasH);
+
+        // Create bitmap for immediate use
+        createImageBitmap(tempCanvas).then(function(bmp){
+          bitmaps[idx] = bmp;
+
+          // Create blob for cache (WebP if supported, else PNG)
+          tempCanvas.toBlob(function(blob){
+            blobs[idx] = blob;
+            idx++;
+            var pct = Math.round((idx / totalFrames) * 100);
+            if(loaderFill) loaderFill.style.width = pct + '%';
+            if(loaderText) loaderText.textContent = 'Caching frames... ' + pct + '%';
+            grabNext();
+          }, 'image/webp', 0.75);
+        });
+      };
+
+      grabNext();
+    });
+  }
+
+  /* ═══════════════════════════════
+     APPLE-STYLE SMOOTH SCROLL ENGINE
+     - Lerp-smoothed progress (no snap)
+     - Sub-frame canvas blending
+     - Cubic bezier easing on all values
+  ═══════════════════════════════ */
+
+  var smoothProgress = 0;  // lerped scroll position
+  var LERP = 0.08;         // smoothing factor (lower = silkier, 0.06–0.10 sweet spot)
+
+  /* Easing helpers */
+  function easeOutCubic(t){ return 1 - Math.pow(1 - t, 3); }
+  function easeInOutCubic(t){ return t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t+2,3)/2; }
+  function easeOutQuart(t){ return 1 - Math.pow(1 - t, 4); }
+
+  /* ── Draw frame with sub-frame blending ── */
+  function drawFrameSmooth(exactIndex){
+    var maxIdx = frames.length - 1;
+    if(maxIdx < 0) return;
+    exactIndex = Math.max(0, Math.min(maxIdx, exactIndex));
+
+    var lo = Math.floor(exactIndex);
+    var hi = Math.min(lo + 1, maxIdx);
+    var blend = exactIndex - lo;
+
+    // Skip if same integer frame and low blend
+    if(lo === currentFrame && blend < 0.01) return;
+    currentFrame = lo;
+
+    var cw = canvas.width, ch = canvas.height;
+
+    if(!frames[lo]) return;
+
+    // If blend is negligible or same frame, draw single
+    if(blend < 0.02 || lo === hi || !frames[hi]){
+      ctx.globalAlpha = 1;
+      ctx.clearRect(0, 0, cw, ch);
+      ctx.drawImage(frames[lo], 0, 0, cw, ch);
+    } else {
+      // Sub-frame blend: draw base frame, overlay next with blend alpha
+      ctx.globalAlpha = 1;
+      ctx.clearRect(0, 0, cw, ch);
+      ctx.drawImage(frames[lo], 0, 0, cw, ch);
+      ctx.globalAlpha = blend;
+      ctx.drawImage(frames[hi], 0, 0, cw, ch);
+      ctx.globalAlpha = 1;
+    }
+  }
+
+  /* ── Title data ── */
+  var titleEls = document.querySelectorAll('.title-overlay');
+  var titleData = [];
+  titleEls.forEach(function(el){
+    titleData.push({
+      el: el,
+      words: el.querySelectorAll('.word:not(.word-space)'),
+      inAt: parseFloat(el.dataset.in),
+      outAt: parseFloat(el.dataset.out),
+      _lastLocal: -999
+    });
   });
-}
 
-/* Helper: fade+rise .fr elements */
-function fadeRise(trigger, els, stagger, delayOffset){
-  gsap.from(els, {
-    y:55, opacity:0, duration:.85, stagger:stagger||.12, ease:'power3.out',
-    scrollTrigger:{trigger:trigger, start:'top 80%', toggleActions:'play none none none', delay:delayOffset||0}
+  /* ── Update titles — word by word with smooth easing ── */
+  function updateTitles(progress){
+    titleData.forEach(function(td){
+      var local = (progress - td.inAt) / (td.outAt - td.inAt);
+
+      // Skip DOM updates if value barely changed
+      if(Math.abs(local - td._lastLocal) < 0.001) return;
+      td._lastLocal = local;
+
+      if(local < -0.01 || local > 1.01){
+        td.el.style.opacity = '0';
+        return;
+      }
+
+      td.el.style.opacity = '1';
+      var count = td.words.length;
+
+      /* Phase 1: 0–25% — words fade in yellow, staggered with cubic ease */
+      if(local <= 0.25){
+        var p = local / 0.25;
+        td.words.forEach(function(w, i){
+          var delay = i / count;
+          var c = Math.max(0, Math.min(1, (p - delay * 0.5) / 0.5));
+          var e = easeOutCubic(c);
+          w.style.opacity = String(e);
+          w.style.color = '#FFD100';
+          w.style.transform = 'translate3d(0,' + (14 * (1 - e)) + 'px,0)';
+        });
+      }
+      /* Phase 2: 25–45% — yellow → white, smooth cubic interpolation */
+      else if(local <= 0.45){
+        var p = (local - 0.25) / 0.20;
+        td.words.forEach(function(w, i){
+          var delay = i / count;
+          var c = Math.max(0, Math.min(1, (p - delay * 0.2) / 0.8));
+          var e = easeInOutCubic(c);
+          var r = 255;
+          var g = Math.round(209 + 46 * e);
+          var b = Math.round(255 * e);
+          w.style.opacity = '1';
+          w.style.color = 'rgb(' + r + ',' + g + ',' + b + ')';
+          w.style.transform = 'translate3d(0,0,0)';
+        });
+      }
+      /* Phase 3: 45–75% — hold white */
+      else if(local <= 0.75){
+        td.words.forEach(function(w){
+          w.style.opacity = '1';
+          w.style.color = '#fff';
+          w.style.transform = 'translate3d(0,0,0)';
+        });
+      }
+      /* Phase 4: 75–100% — fade out upward with smooth quart ease */
+      else {
+        var p = (local - 0.75) / 0.25;
+        var e = easeOutQuart(p);
+        td.el.style.opacity = String(1 - e);
+        td.words.forEach(function(w){
+          w.style.color = '#fff';
+          w.style.transform = 'translate3d(0,' + (-18 * e) + 'px,0)';
+        });
+      }
+    });
+  }
+
+  /* ── Final hero with smooth fade ── */
+  var smoothHeroOpacity = 0;
+
+  function updateFinalHero(progress){
+    var targetOpacity = 0;
+    if(progress >= 0.48){
+      var fadeIn = Math.min(1, (progress - 0.48) / 0.06);
+      targetOpacity = easeOutCubic(fadeIn);
+    }
+
+    // Lerp the hero opacity for silk-smooth transition
+    smoothHeroOpacity += (targetOpacity - smoothHeroOpacity) * 0.12;
+    if(Math.abs(smoothHeroOpacity - targetOpacity) < 0.005) smoothHeroOpacity = targetOpacity;
+
+    finalHero.style.opacity = String(smoothHeroOpacity);
+
+    if(smoothHeroOpacity > 0.5){
+      if(!finalHero.classList.contains('active')) finalHero.classList.add('active');
+    } else {
+      finalHero.classList.remove('active');
+    }
+  }
+
+  /* ── Main scroll loop — Apple-style lerp ── */
+  function loop(){
+    var rect     = container.getBoundingClientRect();
+    var total    = container.offsetHeight - window.innerHeight;
+    var scrolled = -rect.top;
+    var rawProgress = Math.max(0, Math.min(1, scrolled / total));
+
+    // Lerp: smooth the scroll position (this is the key to Apple feel)
+    smoothProgress += (rawProgress - smoothProgress) * LERP;
+
+    // Snap to target when very close (prevents infinite micro-drift)
+    if(Math.abs(smoothProgress - rawProgress) < 0.0001) smoothProgress = rawProgress;
+
+    // Map video: full duration into 0–30% of smooth scroll
+    var videoProgress = Math.min(smoothProgress / 0.50, 1.0);
+    var exactFrame = videoProgress * (totalFrames - 1);
+    drawFrameSmooth(exactFrame);
+
+    updateTitles(smoothProgress);
+    updateFinalHero(smoothProgress);
+
+    // Progress bar (uses raw scroll, not smoothed)
+    var pageTotal  = document.documentElement.scrollHeight - window.innerHeight;
+    var pageScroll = window.scrollY || window.pageYOffset;
+    bar.style.width = (pageTotal > 0 ? (pageScroll / pageTotal) * 100 : 0) + '%';
+
+    requestAnimationFrame(loop);
+  }
+
+  /* ── Hide loader + start ── */
+  function hideLoaderAndStart(){
+    canvas.width  = canvasW;
+    canvas.height = canvasH;
+    canvas.style.width  = '100%';
+    canvas.style.height = '100%';
+    drawFrameSmooth(0);
+
+    if(loader){
+      loader.classList.add('hidden');
+      setTimeout(function(){ loader.classList.add('done'); }, 500);
+    }
+
+    loop();
+  }
+
+  /* ═══════════════════════════════
+     INIT — try cache first, fallback to extract
+  ═══════════════════════════════ */
+  video.addEventListener('loadedmetadata', function(){
+    openDB().then(function(db){
+      // Try loading from IndexedDB cache
+      return loadFromCache(db).then(function(cached){
+        if(cached && cached.length > 0){
+          // Cache hit — instant start, no loader visible
+          if(loaderText) loaderText.textContent = '';
+          frames = cached;
+          hideLoaderAndStart();
+        } else {
+          // Cache miss — extract frames, show progress
+          if(loaderText) loaderText.textContent = 'Preparing first visit...';
+          return extractAndCache(db).then(function(bitmaps){
+            frames = bitmaps;
+            hideLoaderAndStart();
+          });
+        }
+      });
+    }).catch(function(){
+      // IndexedDB not available — extract without caching
+      if(loaderText) loaderText.textContent = 'Loading...';
+
+      var duration = video.duration;
+      useDuration = Math.max(0, duration - 1.5);
+      totalFrames = Math.ceil(useDuration * FPS);
+      var vw = video.videoWidth, vh = video.videoHeight;
+      var scale = Math.min(1, 960 / Math.max(vw, vh));
+      canvasW = Math.round(vw * scale);
+      canvasH = Math.round(vh * scale);
+
+      var tempCanvas = document.createElement('canvas');
+      tempCanvas.width = canvasW; tempCanvas.height = canvasH;
+      var tempCtx = tempCanvas.getContext('2d');
+      var idx = 0;
+
+      function grab(){
+        if(idx >= totalFrames){ hideLoaderAndStart(); return; }
+        video.currentTime = (idx / totalFrames) * useDuration;
+      }
+      video.onseeked = function(){
+        tempCtx.drawImage(video, 0, 0, canvasW, canvasH);
+        createImageBitmap(tempCanvas).then(function(bmp){
+          frames[idx] = bmp;
+          idx++;
+          if(loaderFill) loaderFill.style.width = Math.round((idx/totalFrames)*100) + '%';
+          grab();
+        });
+      };
+      grab();
+    });
   });
-}
 
-/* Platform section */
-revealLines('#s-platform .plat-hl', '#s-platform .plat-hl .rl-in');
-fadeRise('#s-platform .plat-right', ['#s-platform .plat-right']);
-fadeRise('#s-platform .plat-cards', '#s-platform .plat-card', .14);
-
-/* Stats counter animation */
-function animateCount(el){
-  var target   = parseFloat(el.dataset.target);
-  var suffix   = el.dataset.suffix || '';
-  var decimals = parseInt(el.dataset.decimals || 0);
-  var obj = {val:0};
-  gsap.to(obj, {
-    val:target, duration:1.8, ease:'power2.out',
-    onUpdate:function(){ el.textContent = obj.val.toFixed(decimals) + suffix; },
-    scrollTrigger:{trigger:el, start:'top 80%', toggleActions:'play none none none'}
-  });
-}
-document.querySelectorAll('.count').forEach(animateCount);
-fadeRise('#s-stats .stats-row', '.stats-cell', .1);
-
-/* CTA section */
-revealLines('#s-cta .cta-hl', '#s-cta .cta-hl .rl-in');
-fadeRise('#s-cta .cta-sub-text', ['#s-cta .cta-sub-text', '#s-cta .cta-btns'], .14, .15);
+  video.load();
+})();
 </script>
 
 </body>

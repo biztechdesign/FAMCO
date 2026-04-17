@@ -2,7 +2,15 @@
   "permissions": {
     "allow": [
       "WebFetch(domain:www.truckscout24.com)",
-      "Bash(git:*)"
+      "Bash(git:*)",
+      "WebFetch(domain:drive.google.com)",
+      "Bash(curl -L -s \"https://drive.google.com/uc?id=1WRqFlnsLRkvgV5rsCcRgGqRuXeIYSbmy\" -o /tmp/image.png)",
+      "WebFetch(domain:127.0.0.1)",
+      "WebFetch(domain:www.landing.love)",
+      "WebFetch(domain:www.gy6.io)",
+      "WebFetch(domain:land-book.com)",
+      "WebFetch(domain:builtwith.com)",
+      "WebFetch(domain:www.wappalyzer.com)"
     ]
   }
 }
