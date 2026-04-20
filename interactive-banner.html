@@ -303,20 +303,21 @@ body{
 }
 .features-inner{
   width:100%;
-  max-width:1360px;
+  max-width:none;
   margin:0 auto;
-  padding:0 clamp(40px,7vw,100px);
+  /* No right padding — video should touch the viewport right edge */
+  padding:0 0 0 clamp(24px,4vw,64px);
   display:grid;
-  grid-template-columns:1fr 1.1fr;
+  grid-template-columns:40fr 60fr;
   gap:clamp(48px,7vw,120px);
   align-items:center;
   position:relative;
-  min-height:72vh;
+  min-height:86vh;
 }
 .features-left{
   position:relative;
-  height:72vh;
-  max-height:72vh;
+  height:86vh;
+  max-height:86vh;
   /* overflow visible so the last title can scale/translate out of its own column */
   overflow:visible;
   display:flex;
@@ -347,6 +348,10 @@ body{
   color:#DDD9D2;
   margin:0;
 }
+.feature-title .word{
+  display:inline-block;
+  white-space:nowrap;
+}
 .feature-title .char{
   display:inline-block;
   color:#DDD9D2;
@@ -354,14 +359,12 @@ body{
   transition:transform .5s cubic-bezier(.22,.61,.36,1);
   will-change:color,transform;
 }
-.feature-title .char.space{
-  width:.25em;
-}
 .features-right{
   position:relative;
-  aspect-ratio:5/6;
-  max-height:72vh;
-  border-radius:28px;
+  width:100%;
+  aspect-ratio:16/12;
+  max-height:86vh;
+  border-radius:28px 0 0 28px;
   overflow:hidden;
   background:#EEE;
   box-shadow:
@@ -369,7 +372,7 @@ body{
     0 20px 50px -20px rgba(0,0,0,.18),
     0 40px 80px -30px rgba(0,0,0,.12);
   will-change:transform,clip-path,width,height,margin;
-  clip-path:inset(100% 0 0 100% round 28px);
+  clip-path:inset(100% 0 0 100% round 28px 0 0 28px);
   transition:clip-path 1.2s cubic-bezier(.22,.61,.36,1),
              border-radius 2.2s cubic-bezier(.25,.46,.45,.94),
              box-shadow 2.2s cubic-bezier(.25,.46,.45,.94),
@@ -380,15 +383,34 @@ body{
              transform 1.2s cubic-bezier(.22,.61,.36,1);
 }
 .features-pin.visible .features-right{
-  clip-path:inset(0 0 0 0 round 28px);
+  clip-path:inset(0 0 0 0 round 28px 0 0 28px);
 }
-.features-inner.expanded .features-right{
-  /* Right edge stays anchored; width grows leftward only. JS sets width in px so CSS can
-     animate from the current natural width → full inner-container width. */
-  height:72vh;
+/* ════════════════════════════════════════════════════════════════
+   LAST-SCREEN FULL-WIDTH VIDEO (fresh, pure CSS)
+   When .last-screen-active is on the pin, the video takes over the
+   whole pin container (100vw × 100vh), flush to all edges, no radius.
+   ════════════════════════════════════════════════════════════════ */
+.features-pin.last-screen-active .features-right{
+  position:absolute;
+  top:50%;
+  left:0;
+  right:0;
+  width:100vw;
+  height:86vh;
+  max-height:86vh;
   aspect-ratio:auto;
-  max-height:72vh;
-  border-radius:20px;
+  border-radius:0 !important;
+  clip-path:inset(0 0 0 0) !important;
+  box-shadow:none;
+  transform:translateY(-50%);
+  z-index:2;
+  transition:width 1.6s cubic-bezier(.22,.61,.36,1),
+             height 1.6s cubic-bezier(.22,.61,.36,1),
+             left 1.6s cubic-bezier(.22,.61,.36,1),
+             right 1.6s cubic-bezier(.22,.61,.36,1),
+             border-radius 1.6s cubic-bezier(.22,.61,.36,1),
+             clip-path 1.6s cubic-bezier(.22,.61,.36,1),
+             transform 1.6s cubic-bezier(.22,.61,.36,1);
 }
 /* Final centered "Ship Worldwide" — pure CSS, fixed within the pin container.
    Spans the whole pin, flex-centers its child — guaranteed screen center on any viewport. */
@@ -584,16 +606,16 @@ body{
 
       <div class="features-left">
         <div class="feature-item" data-idx="0">
-          <h2 class="feature-title">OEM Certification</h2>
+          <h2 class="feature-title">OEM backed certifications</h2>
         </div>
         <div class="feature-item" data-idx="1">
           <h2 class="feature-title">Arabic-first platform</h2>
         </div>
         <div class="feature-item" data-idx="2">
-          <h2 class="feature-title">WhatsApp in Arabic</h2>
+          <h2 class="feature-title">WhatsApp Commerce Enabled (with Arabic)</h2>
         </div>
         <div class="feature-item is-last" data-idx="3">
-          <h2 class="feature-title">Ship to the Worldwide</h2>
+          <h2 class="feature-title">Shipping to the World</h2>
         </div>
       </div>
 
@@ -617,7 +639,7 @@ body{
     <!-- Final centered title. Sits inside the pin (100vw × 100vh) so flex-centering yields
          true screen center on desktop AND mobile regardless of inner container math. -->
     <div class="last-screen-title" aria-hidden="true">
-      <span>Ship to the Worldwide</span>
+      <span>Shipping to the World</span>
     </div>
 
     <div class="features-progress" id="featuresProgress">
@@ -1083,20 +1105,30 @@ body{
   var count  = items.length;
   var currentIdx = -1;
 
-  /* Split each title into character spans for per-char color animation */
-  var titleChars = []; // array of arrays of spans
+  /* Split each title into words → chars. Chars stay inside a word wrapper so words never
+     break mid-character. Spaces between words are real text nodes so the line can wrap. */
+  var titleChars = []; // array of arrays of char spans (in order)
   items.forEach(function(item){
     var titleEl = item.querySelector('.feature-title');
     var text = titleEl.textContent;
     titleEl.textContent = '';
     var spans = [];
-    for(var i = 0; i < text.length; i++){
-      var span = document.createElement('span');
-      span.className = 'char' + (text[i] === ' ' ? ' space' : '');
-      span.textContent = text[i];
-      titleEl.appendChild(span);
-      spans.push(span);
-    }
+    var words = text.split(' ');
+    words.forEach(function(word, wi){
+      var wordEl = document.createElement('span');
+      wordEl.className = 'word';
+      for(var i = 0; i < word.length; i++){
+        var span = document.createElement('span');
+        span.className = 'char';
+        span.textContent = word[i];
+        wordEl.appendChild(span);
+        spans.push(span);
+      }
+      titleEl.appendChild(wordEl);
+      if(wi < words.length - 1){
+        titleEl.appendChild(document.createTextNode(' '));
+      }
+    });
     titleChars.push(spans);
   });
 
@@ -1245,33 +1277,17 @@ body{
       inner.classList.toggle('expanded', shouldExpand);
     }
 
-    /* Fresh last-screen: toggle a class on the pin; CSS handles the centered title. */
+    /* Toggle last-screen state on the pin; CSS handles centered title + video full-width. */
     if(pin){
       pin.classList.toggle('last-screen-active', shouldExpand);
     }
 
-    /* Video expansion: width grows, right edge stays anchored (margin-left goes negative). */
+    /* Parallax on the video only when NOT in last-screen. In last-screen the CSS rule
+       fully owns the transform so we clear the inline style. */
     if(rightPanel){
       if(shouldExpand){
         rightPanel.style.transform = '';
-        if(!rightPanel.dataset.expandedMarginApplied){
-          var innerRect = inner.getBoundingClientRect();
-          var innerStyle = window.getComputedStyle(inner);
-          var padL = parseFloat(innerStyle.paddingLeft) || 0;
-          var padR = parseFloat(innerStyle.paddingRight) || 0;
-          var targetWidth = innerRect.width - padL - padR;
-          var r = rightPanel.getBoundingClientRect();
-          var deltaLeft = targetWidth - r.width;
-          rightPanel.style.width = targetWidth + 'px';
-          rightPanel.style.marginLeft = (-deltaLeft) + 'px';
-          rightPanel.dataset.expandedMarginApplied = '1';
-        }
       } else {
-        if(rightPanel.dataset.expandedMarginApplied){
-          rightPanel.style.width = '';
-          rightPanel.style.marginLeft = '';
-          delete rightPanel.dataset.expandedMarginApplied;
-        }
         var parallaxRange = 40;
         var offset = (progress - 0.5) * parallaxRange;
         rightPanel.style.transform = 'translate3d(0,' + offset.toFixed(2) + 'px,0)';
@@ -1289,15 +1305,7 @@ body{
   }
 
   window.addEventListener('scroll', requestTick, {passive:true});
-  window.addEventListener('resize', function(){
-    /* Clear the expansion guard so measurements re-run against the new viewport size. */
-    if(rightPanel && rightPanel.dataset.expandedMarginApplied){
-      rightPanel.style.width = '';
-      rightPanel.style.marginLeft = '';
-      delete rightPanel.dataset.expandedMarginApplied;
-    }
-    requestTick();
-  });
+  window.addEventListener('resize', requestTick);
   onScroll();
 })();
 </script>
