@@ -212,7 +212,7 @@ body{
   position:absolute;
   right:clamp(40px,8vw,120px);
   width:100%;
-  max-width:380px;
+  max-width:547px;
 }
 
 
@@ -290,7 +290,7 @@ body{
 @media(max-width:1024px){
   .final-hero{flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px 6vw;padding-bottom:60px;}
   .final-left{max-width:100%;align-items:center;}
-  .ai-search-box{position:relative;top:auto!important;right:auto;max-width:380px;margin-top:30px;}
+  .ai-search-box{position:relative;top:auto!important;right:auto;max-width:547px;margin-top:30px;}
 }
 @media(max-width:768px){
   .title-overlay{padding-left:6vw;}
@@ -322,18 +322,29 @@ body{
     </video>
     <canvas id="frameCanvas"></canvas>
 
-    <!-- Title 1: 0–12% scroll -->
-    <div class="title-overlay" id="title0" data-in="0.0" data-out="0.12">
-      <div class="title-text">Submit Vehicle</div>
+    <!-- DEBUG: scroll progress indicator -->
+    <div id="scrollDebug" style="position:fixed;top:16px;right:16px;z-index:9999;background:rgba(0,0,0,.8);color:#FFD100;font-family:'Outfit',monospace;font-size:18px;font-weight:700;padding:10px 16px;border-radius:8px;border:1px solid #FFD100;box-shadow:0 4px 16px rgba(0,0,0,.5);pointer-events:none;letter-spacing:.05em;">
+      <div style="font-size:11px;color:#9BA8B5;margin-bottom:4px;letter-spacing:.1em;">SCROLL PROGRESS</div>
+      <div id="scrollDebugValue">0.000</div>
     </div>
 
-    <!-- Title 2: 16–30% scroll -->
-    <div class="title-overlay" id="title1" data-in="0.16" data-out="0.30">
-      <div class="title-text">150-Point Inspection & FAMCO Certification</div>
+    <div class="title-overlay" id="title0" data-in="0.000" data-out="0.184">
+      <div class="title-text">Vehicle Drop-Off</div>
     </div>
 
-    <!-- Title 3: 35–48% scroll -->
-    <div class="title-overlay" id="title2" data-in="0.35" data-out="0.48">
+    <div class="title-overlay" id="title1" data-in="0.185" data-out="0.295">
+      <div class="title-text">150-Point Inspection</div>
+    </div>
+
+    <div class="title-overlay" id="title2" data-in="0.296" data-out="0.332">
+      <div class="title-text">Rebuild</div>
+    </div>
+
+    <div class="title-overlay" id="title3" data-in="0.333" data-out="0.362">
+      <div class="title-text">FAMCO Certified</div>
+    </div>
+
+    <div class="title-overlay" id="title4" data-in="0.363" data-out="0.469">
       <div class="title-text">Buy with<br>Confidence</div>
     </div>
 
@@ -640,49 +651,44 @@ body{
       td.el.style.opacity = '1';
       var count = td.words.length;
 
-      /* Phase 1: 0–25% — words fade in yellow, staggered with cubic ease */
-      if(local <= 0.25){
-        var p = local / 0.25;
-        td.words.forEach(function(w, i){
-          var delay = i / count;
-          var c = Math.max(0, Math.min(1, (p - delay * 0.5) / 0.5));
-          var e = easeOutCubic(c);
+      /* Phase 1: 0–10% — quick fade in yellow */
+      if(local <= 0.10){
+        var p = local / 0.10;
+        var e = easeOutCubic(p);
+        td.words.forEach(function(w){
           w.style.opacity = String(e);
           w.style.color = '#FFD100';
-          w.style.transform = 'translate3d(0,' + (14 * (1 - e)) + 'px,0)';
+          w.style.transform = 'translate3d(0,' + (10 * (1 - e)) + 'px,0)';
         });
       }
-      /* Phase 2: 25–45% — yellow → white, smooth cubic interpolation */
-      else if(local <= 0.45){
-        var p = (local - 0.25) / 0.20;
-        td.words.forEach(function(w, i){
-          var delay = i / count;
-          var c = Math.max(0, Math.min(1, (p - delay * 0.2) / 0.8));
-          var e = easeInOutCubic(c);
-          var r = 255;
-          var g = Math.round(209 + 46 * e);
-          var b = Math.round(255 * e);
+      /* Phase 2: 10–20% — yellow → white */
+      else if(local <= 0.20){
+        var p = (local - 0.10) / 0.10;
+        var e = easeInOutCubic(p);
+        var g = Math.round(209 + 46 * e);
+        var b = Math.round(255 * e);
+        td.words.forEach(function(w){
           w.style.opacity = '1';
-          w.style.color = 'rgb(' + r + ',' + g + ',' + b + ')';
+          w.style.color = 'rgb(255,' + g + ',' + b + ')';
           w.style.transform = 'translate3d(0,0,0)';
         });
       }
-      /* Phase 3: 45–75% — hold white */
-      else if(local <= 0.75){
+      /* Phase 3: 20–80% — hold white (full readable window) */
+      else if(local <= 0.80){
         td.words.forEach(function(w){
           w.style.opacity = '1';
           w.style.color = '#fff';
           w.style.transform = 'translate3d(0,0,0)';
         });
       }
-      /* Phase 4: 75–100% — fade out upward with smooth quart ease */
+      /* Phase 4: 80–100% — fade out upward */
       else {
-        var p = (local - 0.75) / 0.25;
+        var p = (local - 0.80) / 0.20;
         var e = easeOutQuart(p);
         td.el.style.opacity = String(1 - e);
         td.words.forEach(function(w){
           w.style.color = '#fff';
-          w.style.transform = 'translate3d(0,' + (-18 * e) + 'px,0)';
+          w.style.transform = 'translate3d(0,' + (-14 * e) + 'px,0)';
         });
       }
     });
@@ -693,8 +699,8 @@ body{
 
   function updateFinalHero(progress){
     var targetOpacity = 0;
-    if(progress >= 0.48){
-      var fadeIn = Math.min(1, (progress - 0.48) / 0.06);
+    if(progress >= 0.47){
+      var fadeIn = Math.min(1, (progress - 0.47) / 0.05);
       targetOpacity = easeOutCubic(fadeIn);
     }
 
@@ -731,6 +737,10 @@ body{
 
     updateTitles(smoothProgress);
     updateFinalHero(smoothProgress);
+
+    // Debug timestamp
+    var debugEl = document.getElementById('scrollDebugValue');
+    if(debugEl) debugEl.textContent = smoothProgress.toFixed(3);
 
     // Progress bar (uses raw scroll, not smoothed)
     var pageTotal  = document.documentElement.scrollHeight - window.innerHeight;
