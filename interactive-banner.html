@@ -70,12 +70,6 @@ body{
   font-family:'DM Sans',sans-serif;font-size:12px;color:rgba(255,255,255,.35);letter-spacing:.06em;
 }
 
-.scroll-progress{
-  position:fixed;top:0;left:0;height:2px;
-  background:#FFD100;z-index:999;width:0%;
-  pointer-events:none;
-}
-
 /* ═══════════════════════════════
    TITLE OVERLAYS
 ═══════════════════════════════ */
@@ -525,8 +519,6 @@ body{
   <div class="frame-loader-text" id="loaderText">Loading...</div>
 </div>
 
-<div class="scroll-progress" id="scrollProgress"></div>
-
 <div class="video-scroll-container" id="videoScrollContainer">
   <div class="video-sticky">
 
@@ -534,12 +526,6 @@ body{
       <source src="famco-marketplace3.1-compressed.mp4" type="video/mp4">
     </video>
     <canvas id="frameCanvas"></canvas>
-
-    <!-- DEBUG: scroll progress indicator -->
-    <div id="scrollDebug" style="position:fixed;top:16px;right:16px;z-index:9999;background:rgba(0,0,0,.8);color:#FFD100;font-family:'Outfit',monospace;font-size:18px;font-weight:700;padding:10px 16px;border-radius:8px;border:1px solid #FFD100;box-shadow:0 4px 16px rgba(0,0,0,.5);pointer-events:none;letter-spacing:.05em;">
-      <div style="font-size:11px;color:#9BA8B5;margin-bottom:4px;letter-spacing:.1em;">SCROLL PROGRESS</div>
-      <div id="scrollDebugValue">0.000</div>
-    </div>
 
     <div class="title-overlay" id="title0" data-in="0.000" data-out="0.184">
       <div class="title-text">Vehicle Drop-Off</div>
@@ -689,7 +675,6 @@ body{
   var canvas    = document.getElementById('frameCanvas');
   var ctx       = canvas.getContext('2d');
   var container = document.getElementById('videoScrollContainer');
-  var bar       = document.getElementById('scrollProgress');
   var finalHero = document.getElementById('finalHero');
   var loader    = document.getElementById('frameLoader');
   var loaderFill= document.getElementById('loaderFill');
@@ -1004,15 +989,6 @@ body{
 
     updateTitles(smoothProgress);
     updateFinalHero(smoothProgress);
-
-    // Debug timestamp
-    var debugEl = document.getElementById('scrollDebugValue');
-    if(debugEl) debugEl.textContent = smoothProgress.toFixed(3);
-
-    // Progress bar (uses raw scroll, not smoothed)
-    var pageTotal  = document.documentElement.scrollHeight - window.innerHeight;
-    var pageScroll = window.scrollY || window.pageYOffset;
-    bar.style.width = (pageTotal > 0 ? (pageScroll / pageTotal) * 100 : 0) + '%';
 
     requestAnimationFrame(loop);
   }
